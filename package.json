@@ -1,0 +1,10 @@
+{
+  "name": "coach-amavie",
+  "version": "1.0.0",
+  "description": "Site du Coach AMAVIE (Metanoïa Coaching) : site public, prise de rendez-vous, devis de formation, ateliers, discussion en direct avec le coach et ses assistant(e)s, espace coach — un seul serveur, une seule base de données.",
+  "main": "server.js",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" },
+  "license": "UNLICENSED",
+  "private": true
+}

@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0E2230">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/img/icon-192.png" type="image/png">
+<title>Espace coach</title>
+<link rel="stylesheet" href="/fonts/fonts.css">
+<link rel="stylesheet" href="/admin.css">
+<style>
+/* Tableau de bord */
+.agenda .day{font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--or3);margin:14px 0 6px;}
+.agenda .day:first-child{margin-top:0;}
+.it{display:flex;gap:12px;align-items:center;padding:10px 12px;border-radius:14px;background:var(--gris);margin-bottom:6px;cursor:pointer;}
+.it:hover{background:var(--orp2);}
+.it .hr{font-family:var(--fd);font-weight:700;font-size:24px;min-width:62px;}
+.it .tx{flex:1;min-width:0;}
+.it .tx b{display:block;}
+.it .tx small{display:block;color:var(--gris4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+/* Rendez-vous */
+.f-tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;}
+.rv-msg{background:var(--gris);border-radius:10px;padding:8px 10px;font-size:13px;margin-top:6px;white-space:pre-wrap;max-width:420px;}
+.acts{display:flex;gap:6px;flex-wrap:wrap;}
+.wa{color:#1F9D55;font-weight:700;text-decoration:none;font-size:12.5px;}
+.slots{display:flex;flex-wrap:wrap;gap:6px;}
+.slots button{padding:8px 12px;border-radius:999px;background:#fff;border:1.5px solid var(--gris2);font-weight:700;}
+.slots button.on{background:var(--nuit);color:#fff;border-color:var(--nuit);}
+.slots button:disabled{opacity:.35;text-decoration:line-through;}
+/* Discussions */
+.chatw{display:grid;grid-template-columns:320px 1fr;gap:14px;height:calc(100vh - 250px);min-height:460px;}
+@media(max-width:820px){.chatw{grid-template-columns:1fr;height:auto;}}
+.convs{background:#fff;border-radius:20px;overflow-y:auto;}
+.cv-f{display:flex;gap:4px;padding:10px;border-bottom:1px solid var(--gris);flex-wrap:wrap;position:sticky;top:0;background:#fff;z-index:1;}
+.cv-f button{padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700;color:var(--gris4);}
+.cv-f button.on{background:var(--nuit);color:#fff;}
+.conv{padding:13px 14px;border-bottom:1px solid var(--gris);cursor:pointer;display:flex;gap:10px;align-items:center;}
+.conv:hover{background:#FDFBF7;}
+.conv.on{background:var(--orp2);}
+.conv .av{width:42px;height:42px;border-radius:50%;background:var(--nuit);color:var(--or2);display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0;}
+.conv .ci{flex:1;min-width:0;}
+.conv .ci b{display:block;}
+.conv .ci small{display:block;color:var(--gris4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.conv .tg{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.4px;color:var(--or3);}
+.thread{background:#fff;border-radius:20px;display:flex;flex-direction:column;overflow:hidden;min-height:460px;}
+.thread-h{padding:12px 18px;border-bottom:1px solid var(--gris);display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;}
+.thread-h b{font-size:16px;}
+.msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:8px;background:var(--creme);}
+.msg{max-width:75%;padding:10px 14px;border-radius:16px;font-size:14px;line-height:1.45;word-wrap:break-word;white-space:pre-wrap;}
+.msg.cl{align-self:flex-start;background:#fff;box-shadow:0 1px 0 var(--gris2);border-bottom-left-radius:5px;}
+.msg.re{align-self:flex-end;background:var(--nuit);color:#fff;border-bottom-right-radius:5px;}
+.msg.auto{background:var(--orp2);color:var(--noir);}
+.msg .au{display:block;font-size:11.5px;font-weight:800;color:var(--or2);margin-bottom:2px;}
+.msg.cl .au{color:var(--or3);}
+.msg time{display:block;font-size:11px;opacity:.6;margin-top:3px;}
+.thread-f{display:flex;gap:8px;padding:12px;border-top:1px solid var(--gris);align-items:flex-end;}
+.thread-f textarea{flex:1;padding:12px 16px;border-radius:22px;border:1.5px solid var(--gris2);outline:none;resize:none;max-height:140px;line-height:1.4;}
+.quick{display:flex;gap:6px;flex-wrap:wrap;padding:0 12px 10px;}
+.quick button{padding:5px 10px;border-radius:999px;background:var(--orp2);font-size:12px;font-weight:700;color:var(--or3);}
+/* Listes de contenus */
+.lst .li{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--gris);}
+.lst .li:last-child{border-bottom:none;}
+.lst .li.off{opacity:.5;}
+.lst .li .tx{flex:1;min-width:0;}
+.lst .li .tx b{display:block;font-size:15px;}
+.lst .li .tx small{display:block;color:var(--gris4);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sw-l{display:flex;gap:8px;align-items:center;font-weight:700;font-size:13px;}
+.colpick{display:flex;gap:8px;}
+.colpick button{width:44px;height:44px;border-radius:50%;border:3px solid transparent;box-shadow:0 0 0 1px var(--gris2);}
+.colpick button.on{border-color:var(--or);}
+/* Bannières */
+.bans{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;}
+.ban{height:170px;border-radius:18px;position:relative;overflow:hidden;color:#fff;display:flex;align-items:center;padding:18px;}
+.ban.nuit{background:radial-gradient(circle at 80% 45%,#1E5468,#0B1C28 75%);}
+.ban.bleu{background:radial-gradient(circle at 80% 40%,#2A7189,#0F3546 85%);}
+.ban.or{background:radial-gradient(circle at 78% 45%,#FFFBF1,#E6D5B2);color:var(--nuit);}
+.ban img.bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.ban.has-img::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(14,34,48,.92),rgba(14,34,48,.25));}
+.ban .lau{position:absolute;right:-10px;top:50%;transform:translateY(-50%);height:88%;}
+.ban .bt{position:relative;z-index:2;max-width:68%;}
+.ban .bt small{display:block;font-size:10.5px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:var(--or2);}
+.ban.or .bt small{color:var(--or3);}
+.ban .bt .h{font-size:25px;margin-top:4px;}
+.ban .bt .h em{color:var(--or2);}
+.ban.or .bt .h em{color:var(--or3);}
+.ban .bt p{font-size:12.5px;line-height:1.35;margin-top:5px;opacity:.85;}
+.ban-c{background:#fff;border-radius:22px;padding:10px;}
+.ban-c.off .ban{opacity:.45;filter:grayscale(.6);}
+.ban-a{display:flex;align-items:center;gap:8px;padding:10px 4px 2px;flex-wrap:wrap;}
+/* Messages */
+.days{display:flex;gap:5px;flex-wrap:wrap;}
+.days button{width:36px;height:36px;border-radius:50%;background:var(--gris);font-weight:800;font-size:13px;}
+.days button.on{background:var(--nuit);color:#fff;}
+.prog{display:flex;gap:14px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--gris);flex-wrap:wrap;}
+.prog:last-child{border-bottom:none;}
+.prog .hr{font-family:var(--fd);font-weight:700;font-size:36px;min-width:90px;}
+.prog .tx{flex:1;min-width:220px;}
+.prog .tx b{display:block;}
+.prog .tx p{color:var(--gris4);font-size:13.5px;margin-top:2px;}
+.ins{display:flex;gap:6px;flex-wrap:wrap;margin:-4px 0 12px;}
+.ins button{padding:5px 10px;border-radius:8px;background:var(--orp);font-size:12px;font-weight:700;}
+/* Devis */
+.devis{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;}
+.dv .k{display:flex;justify-content:space-between;gap:10px;padding:5px 0;font-size:13.5px;border-bottom:1px solid var(--gris);}
+.dv .k span{color:var(--gris4);}
+.dv .k b{text-align:right;}
+.dv .desc{background:var(--gris);border-radius:12px;padding:10px;font-size:13.5px;margin:10px 0;white-space:pre-wrap;}
+/* Chips éditables */
+.chips{display:flex;flex-wrap:wrap;gap:6px;}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:7px 8px 7px 13px;border-radius:999px;background:var(--gris);font-weight:700;font-size:13px;}
+.chip button{width:22px;height:22px;border-radius:50%;background:#fff;font-weight:800;font-size:12px;}
+.soc-i{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:4px 16px;}
+.qr-c{text-align:center;background:#fff;border:2px solid var(--nuit);border-radius:22px;padding:20px;max-width:340px;}
+.qr-c svg{width:220px;height:220px;margin:10px auto;display:block;}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="logo"><img src="/img/logo-mc.png" alt=""></div>
+  <div class="brand"><div class="h" id="g-nom">Espace coach</div><small><span id="g-me"></span> · <span class="live" id="live"><i></i><span>connexion…</span></span></small></div>
+  <div class="tb-r">
+    <button class="dispo on" id="g-dispo" onclick="toggleDispo()" title="Les visiteurs voient si vous êtes disponible pour discuter"><i></i><span>Disponible</span></button>
+    <a class="tb-btn" href="/" target="_blank">Voir le site</a>
+    <button class="tb-btn" onclick="logout()">Déconnexion</button>
+  </div>
+</header>
+<nav class="nav" id="nav"></nav>
+<main class="content" id="content"></main>
+
+<script src="/vendor/qrcode.js"></script>
+<script src="/admin-commun.js"></script>
+<script>
+let G = null, P = 'accueil', ME = null;
+const isCoach = () => ME && ME.role === 'coach';
+const byId = (arr, id) => arr.find(x => x.id === Number(id));
+const upsert = (arr, o) => { const i = arr.findIndex(x => x.id === o.id); if (i >= 0) arr[i] = o; else arr.push(o); };
+const JOURS = [[1, 'L'], [2, 'M'], [3, 'M'], [4, 'J'], [5, 'V'], [6, 'S'], [0, 'D']];
+const PAYS = ['Espèces', 'Wave', 'Orange Money', 'MTN MoMo', 'Moov Money', 'Virement', 'Offert'];
+const waLink = t => t ? `https://wa.me/${String(t).replace(/\D/g, '')}` : '';
+const telLink = t => `<a href="tel:${esc(t)}">${esc(t)}</a>${t ? ` · <a class="wa" href="${waLink(t)}" target="_blank" rel="noopener">WhatsApp</a>` : ''}`;
+let audioCtx = null;
+
+const PANELS = [
+  ['accueil', 'Tableau de bord'], ['rdv', 'Rendez-vous', 'n-rdv'], ['discussions', 'Discussions', 'n-chat'], ['devis', 'Devis formations', 'n-devis'],
+  ['ateliers', 'Ateliers', 'n-at'], ['personnes', 'Personnes accompagnées'], ['messages', 'Messages & pensées'], '|',
+  ['coach', 'Le coach', null, true], ['contacts', 'Contacts & réseaux', null, true], ['agenda', 'Agenda & horaires', null, true],
+  ['themes', 'Accompagnements'], ['bannieres', 'Bannière défilante'], ['temoignages', 'Témoignages', 'n-tem'], ['ressources', 'Ressources'], ['faq', 'FAQ', null, true], '|',
+  ['equipe', 'Équipe', null, true], ['compte', 'Mon compte']
+];
+
+// ===================================================================
+// DÉMARRAGE
+// ===================================================================
+function buildNav() {
+  $('nav').innerHTML = PANELS.filter(p => p === '|' || !p[3] || isCoach()).map(p => p === '|' ? '<span class="sep"></span>' : `<button class="nb" data-p="${p[0]}">${p[1]}${p[2] ? ` <span class="cnt" id="${p[2]}"></span>` : ''}</button>`).join('');
+  $('content').innerHTML = PANELS.filter(p => p !== '|').map(p => `<section class="panel" id="p-${p[0]}"></section>`).join('');
+  document.querySelectorAll('#nav .nb').forEach(b => b.onclick = () => showPanel(b.dataset.p));
+}
+function showPanel(p) {
+  if (!$('p-' + p) || !document.querySelector(`#nav [data-p="${p}"]`)) p = 'accueil';
+  P = p;
+  document.querySelectorAll('#nav .nb').forEach(b => b.classList.toggle('on', b.dataset.p === p));
+  document.querySelectorAll('.panel').forEach(x => x.classList.toggle('on', x.id === 'p-' + p));
+  render(); window.scrollTo(0, 0);
+  try { localStorage.setItem('c_panel', p); } catch (e) { }
+}
+async function load() {
+  G = await api('/api/admin/bootstrap');
+  ME = G.me;
+  $('g-nom').textContent = G.coach.nom;
+  $('g-me').textContent = ME.nom + (isCoach() ? ' · coach' : ' · assistant(e)');
+  renderDispo();
+}
+adminBoot(async () => {
+  await load();
+  buildNav();
+  let p = 'accueil'; try { p = localStorage.getItem('c_panel') || p; } catch (e) { }
+  showPanel(p);
+  adminStream({
+    rdv: r => { const isNew = !G.rdvs.some(x => x.id === r.id); const old = byId(G.rdvs, r.id); const prev = old && old.statut; upsert(G.rdvs, r);
+      if (isNew && r.statut === 'demande') alerte('Nouvelle demande de rendez-vous', `${r.nom} · ${dLong(r.date)} à ${r.heure}`);
+      else if (prev && prev !== r.statut && r.annulePar === 'client' && r.statut === 'annule') alerte('Rendez-vous annulé par la personne', `${r.nom} · ${dLong(r.date)} à ${r.heure}`);
+      else if (prev === 'propose' && r.statut === 'confirme') alerte('Nouvel horaire accepté', `${r.nom} · ${dLong(r.date)} à ${r.heure}`);
+      refresh(['rdv', 'accueil', 'personnes']); },
+    devis: d => { const isNew = !G.devis.some(x => x.id === d.id); const old = byId(G.devis, d.id); const prev = old && old.statut; upsert(G.devis, d);
+      if (isNew) alerte('Nouvelle demande de devis', `${d.nom} · ${d.theme} · ${d.participants} pers.`);
+      else if (prev !== d.statut && (d.statut === 'accepte' || d.statut === 'refuse')) alerte('Devis ' + (d.statut === 'accepte' ? 'accepté' : 'refusé'), d.nom + ' · ' + d.theme);
+      refresh(['devis', 'accueil']); },
+    chat: m => { const c = Object.assign({}, m); delete c.clientNom; delete c.clientTel; delete c.invite; upsert(G.chats, c);
+      if (!G.clients.some(x => x.id === m.clientId)) G.clients.push({ id: m.clientId, nom: m.clientNom, tel: m.clientTel, invite: m.invite, createdAt: m.at });
+      if (m.de === 'client' && !(P === 'discussions' && CUR === m.clientId && !document.hidden)) alerte('Message de ' + m.clientNom, m.texte, 1);
+      if (P === 'discussions') renderDiscussions(true); else refresh(['accueil']); badges(); },
+    chatLu: d => { G.chats.forEach(x => { if (x.clientId === d.clientId && x.de === 'client') x.lu = true; }); badges(); if (P === 'discussions') renderDiscussions(true); },
+    client: c => { upsert(G.clients, c); refresh(['personnes']); },
+    clientSupprime: d => { G.clients = G.clients.filter(c => c.id !== d.id); G.chats = G.chats.filter(m => m.clientId !== d.id); refresh(['personnes', 'discussions']); },
+    inscription: i => { const isNew = !G.inscriptions.some(x => x.id === i.id); upsert(G.inscriptions, i); if (isNew) alerte('Nouvelle inscription à un atelier', `${i.nom} · ${i.titre} · ${i.places} place(s)`); refresh(['ateliers', 'accueil']); },
+    temoignage: t => { upsert(G.temoignages, t); alerte('Nouveau témoignage à relire', t.nom + ' : ' + t.texte.slice(0, 80)); refresh(['temoignages', 'accueil']); },
+    presence: p => { G.presence = p; if (P === 'equipe' || P === 'accueil') render(); }
+  }, on => { $('live').classList.toggle('on', on); $('live').querySelector('span').textContent = on ? 'en direct' : 'reconnexion…'; if (on && G) load().then(() => render()); });
+});
+function refresh(list) { if (list.includes(P)) render(); badges(); }
+function render() {
+  if (!G) return;
+  const fn = { accueil: rAccueil, rdv: rRdv, discussions: renderDiscussions, devis: rDevis, ateliers: rAteliers, personnes: rPersonnes, messages: rMessages,
+    coach: rCoach, contacts: rContacts, agenda: rAgenda, themes: rThemes, bannieres: rBanners, temoignages: rTem, ressources: rRess, faq: rFaq, equipe: rEquipe, compte: rCompte }[P];
+  if (fn) fn();
+  badges();
+}
+function badges() {
+  const set = (id, n) => { const el = $(id); if (el) el.textContent = n || ''; };
+  const nr = G.rdvs.filter(r => r.statut === 'demande').length;
+  const nc = G.chats.filter(m => m.de === 'client' && !m.lu).length;
+  set('n-rdv', nr); set('n-chat', nc);
+  set('n-devis', G.devis.filter(d => d.statut === 'nouveau').length);
+  set('n-at', G.inscriptions.filter(i => i.statut === 'inscrit').length);
+  set('n-tem', G.temoignages.filter(t => !t.publie && t.source === 'site').length);
+  const tot = nr + nc;
+  document.title = (tot ? `(${tot}) ` : '') + 'Espace coach — ' + G.coach.nom;
+}
+function ding(kind) {
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    const notes = kind === 1 ? [659, 988] : [784, 1046, 1318];
+    notes.forEach((f, i) => { const o = audioCtx.createOscillator(), g = audioCtx.createGain(); const t = audioCtx.currentTime + i * .16; o.type = 'sine'; o.frequency.value = f; g.gain.setValueAtTime(.2, t); g.gain.exponentialRampToValueAtTime(.001, t + .4); o.connect(g); g.connect(audioCtx.destination); o.start(t); o.stop(t + .42); });
+  } catch (e) { }
+}
+document.addEventListener('click', () => { if (!audioCtx) try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { } }, { once: true });
+function alerte(t, b, kind) {
+  ding(kind); toast(t, b);
+  if ('Notification' in window && Notification.permission === 'granted' && document.hidden) { try { new Notification(t, { body: b, icon: '/img/icon-192.png' }); } catch (e) { } }
+}
+function renderDispo() { const on = G.coach.disponible !== false, b = $('g-dispo'); b.className = 'dispo ' + (on ? 'on' : 'off'); b.querySelector('span').textContent = on ? 'Disponible pour discuter' : 'Indisponible'; }
+async function toggleDispo() { try { const r = await api('/api/admin/coach', { method: 'PUT', body: { disponible: G.coach.disponible === false } }); G.coach = r.coach; renderDispo(); toast(G.coach.disponible ? 'Vous apparaissez disponible' : 'Vous apparaissez indisponible', 'Les visiteurs le voient en direct sur le site.'); } catch (e) { toast('Erreur', e.message, true); } }
+const nomTheme = id => (byId(G.themes, id) || {}).nom || '';
+const clientOf = id => byId(G.clients, id) || { nom: 'Personne', tel: '' };
+async function pickImg(input, prevId, set, max) {
+  const f = input.files[0]; if (!f) return;
+  const pv = $(prevId); if (pv) pv.style.opacity = .4;
+  try { const url = await uploadImage(f, max); set(url); if (pv) pv.style.backgroundImage = `url('${url}')`; } catch (e) { toast('Image', e.message, true); }
+  if (pv) pv.style.opacity = 1;
+}
+
+// ===================================================================
+// TABLEAU DE BORD
+// ===================================================================
+function encaisseMois() {
+  const m = todayStr().slice(0, 7);
+  let t = 0;
+  G.rdvs.forEach(r => { if (r.paiement && r.paiement.montant && (r.paiement.at || '').slice(0, 7) === m) t += r.paiement.montant; });
+  G.devis.forEach(d => { if (d.statut === 'termine' && (d.termineAt || '').slice(0, 7) === m) t += d.montant || 0; });
+  G.inscriptions.forEach(i => { if (i.montant && (i.at || '').slice(0, 7) === m && i.statut !== 'annulee') t += i.montant; });
+  return t;
+}
+function rAccueil() {
+  const td = todayStr();
+  const auj = G.rdvs.filter(r => r.date === td && ['confirme', 'honore'].includes(r.statut));
+  const aTraiter = G.rdvs.filter(r => r.statut === 'demande').length + G.devis.filter(d => d.statut === 'nouveau').length + G.inscriptions.filter(i => i.statut === 'inscrit').length + G.temoignages.filter(t => !t.publie && t.source === 'site').length;
+  const nonLus = G.chats.filter(m => m.de === 'client' && !m.lu).length;
+  const semaine = G.rdvs.filter(r => ['confirme', 'demande', 'propose'].includes(r.statut) && r.date >= td && r.date <= addDays(td, 7)).sort((a, b) => (a.date + a.heure).localeCompare(b.date + b.heure));
+  const byDay = {}; semaine.forEach(r => (byDay[r.date] = byDay[r.date] || []).push(r));
+  const todo = [].concat(
+    G.rdvs.filter(r => r.statut === 'demande').map(r => ({ at: r.at, t: 'Rendez-vous demandé', s: `${r.nom} · ${dLong(r.date)} ${r.heure}`, go: `showPanel('rdv')` })),
+    G.devis.filter(d => d.statut === 'nouveau').map(d => ({ at: d.at, t: 'Demande de devis', s: `${d.nom} · ${d.theme}`, go: `showPanel('devis')` })),
+    G.inscriptions.filter(i => i.statut === 'inscrit').map(i => ({ at: i.at, t: 'Inscription atelier', s: `${i.nom} · ${i.titre}`, go: `showPanel('ateliers')` })),
+    G.temoignages.filter(t => !t.publie && t.source === 'site').map(t => ({ at: t.at, t: 'Témoignage à relire', s: t.nom, go: `showPanel('temoignages')` }))
+  ).sort((a, b) => b.at.localeCompare(a.at)).slice(0, 8);
+  const convs = {}; G.chats.forEach(m => { (convs[m.clientId] = convs[m.clientId] || []).push(m); });
+  const recent = Object.keys(convs).map(Number).map(id => ({ id, last: convs[id][convs[id].length - 1], un: convs[id].filter(m => m.de === 'client' && !m.lu).length })).sort((a, b) => b.last.at.localeCompare(a.last.at)).slice(0, 6);
+  const p = G.presence || { enLigne: [] };
+  $('p-accueil').innerHTML = `<div class="ph-t"><div><div class="h">Bonjour ${esc(ME.nom.split(' ')[0])}</div><p>${esc(dLong(td))} · ${p.enLigne && p.enLigne.length ? 'En ligne : ' + p.enLigne.map(u => esc(u.nom)).join(', ') : ''}</p></div>
+      <div class="row">${'Notification' in window && Notification.permission === 'default' ? `<button class="btn ghost" onclick="Notification.requestPermission().then(()=>render())">Activer les alertes sur cet appareil</button>` : ''}<button class="btn" onclick="editRdvManuel()">+ Ajouter un rendez-vous</button></div></div>
+    <div class="kpis"><div class="kpi nuit" onclick="RF='jour';showPanel('rdv')"><div class="l">Rendez-vous aujourd’hui</div><div class="v">${auj.length}</div><div class="s">${auj.map(r => r.heure).join(' · ') || 'Aucun'}</div></div>
+      <div class="kpi or"><div class="l">À traiter</div><div class="v">${aTraiter}</div><div class="s">demandes en attente</div></div>
+      <div class="kpi" onclick="showPanel('discussions')"><div class="l">Messages non lus</div><div class="v">${nonLus}</div><div class="s">${G.clients.length} personne(s) en contact</div></div>
+      <div class="kpi"><div class="l">Encaissé ce mois</div><div class="v" style="font-size:32px">${F(encaisseMois())}</div><div class="s">séances, ateliers, formations</div></div></div>
+    <div class="grid3" style="align-items:start">
+      <div class="card agenda"><div class="card-t">Les 7 prochains jours <button class="btn ghost sm" onclick="RF='venir';showPanel('rdv')">Agenda</button></div>
+        ${Object.keys(byDay).length ? Object.keys(byDay).map(d => `<div class="day">${d === td ? 'Aujourd’hui' : esc(dLong(d))}</div>${byDay[d].map(r => `<div class="it" onclick="showPanel('rdv')"><span class="hr">${esc(r.heure)}</span><span class="tx"><b>${esc(r.nom)}</b><small>${esc(r.theme)} · ${esc(r.format)}</small></span>${r.statut === 'confirme' ? '<span class="badge vert">Confirmé</span>' : r.statut === 'propose' ? '<span class="badge bleu">Proposé</span>' : '<span class="badge or">À confirmer</span>'}</div>`).join('')}`).join('') : '<div class="empty">Aucun rendez-vous cette semaine.</div>'}</div>
+      <div class="card"><div class="card-t">À traiter</div>${todo.length ? todo.map(x => `<div class="it" onclick="${x.go}"><span class="tx"><b>${esc(x.t)}</b><small>${esc(x.s)}</small></span><span class="hint">${fdt(x.at)}</span></div>`).join('') : '<div class="empty">Tout est à jour. 🌿</div>'}</div>
+      <div class="card"><div class="card-t">Discussions récentes <button class="btn ghost sm" onclick="showPanel('discussions')">Ouvrir</button></div>${recent.length ? recent.map(c => `<div class="it" onclick="showPanel('discussions');openConv(${c.id})"><span class="tx"><b>${esc(clientOf(c.id).nom)}</b><small>${esc((c.last.de === 'client' ? '' : (c.last.auteur || 'Vous') + ' : ') + c.last.texte)}</small></span>${c.un ? `<span class="cnt">${c.un}</span>` : ''}</div>`).join('') : '<div class="empty">Aucune discussion pour le moment.</div>'}</div>
+    </div>`;
+}
+
+// ===================================================================
+// RENDEZ-VOUS
+// ===================================================================
+let RF = 'traiter';
+const RDV_B = { demande: '<span class="badge or">À confirmer</span>', confirme: '<span class="badge vert">Confirmé</span>', propose: '<span class="badge bleu">Horaire proposé</span>', refuse: '<span class="badge rouge">Refusé</span>', annule: '<span class="badge">Annulé</span>', honore: '<span class="badge nuit">Effectué</span>', absent: '<span class="badge rouge">Absent</span>' };
+function rdvFilters() {
+  const td = todayStr();
+  return { traiter: r => ['demande', 'propose'].includes(r.statut), jour: r => r.date === td && ['confirme', 'honore', 'absent'].includes(r.statut), venir: r => r.statut === 'confirme' && r.date >= td, passes: r => r.date < td && ['confirme', 'honore', 'absent'].includes(r.statut), tous: () => true };
+}
+function rRdv() {
+  const f = rdvFilters();
+  const list = G.rdvs.filter(f[RF]).sort((a, b) => RF === 'passes' || RF === 'tous' ? (b.date + b.heure).localeCompare(a.date + a.heure) : (a.date + a.heure).localeCompare(b.date + b.heure));
+  const cnt = k => G.rdvs.filter(f[k]).length;
+  $('p-rdv').innerHTML = `<div class="ph-t"><div><div class="h">Rendez-vous</div><p>La personne reçoit une notification dès que vous confirmez, proposez un autre horaire ou annulez. Un rappel automatique part la veille à 18 h.</p></div>
+      <div class="row"><button class="btn ghost" onclick="${isCoach() ? `showPanel('agenda')` : `toast('Réservé au coach','')`}">Horaires & jours de consultation</button><button class="btn" onclick="editRdvManuel()">+ Ajouter un rendez-vous</button></div></div>
+    <div class="f-tabs">${[['traiter', 'À traiter'], ['jour', 'Aujourd’hui'], ['venir', 'À venir'], ['passes', 'Passés'], ['tous', 'Tous']].map(([k, l]) => `<button class="nb ${RF === k ? 'on' : ''}" onclick="RF='${k}';render()">${l} (${cnt(k)})</button>`).join('')}</div>
+    <div class="card">${list.length ? `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Date</th><th>Personne</th><th>Sujet & format</th><th>Statut</th><th></th></tr></thead><tbody>
+      ${list.map(r => `<tr><td style="white-space:nowrap"><b>${esc(dLong(r.date))}</b><br><span class="h" style="font-size:24px">${esc(r.heure)}</span>${r.proposition ? `<div class="hint">→ proposé : ${dmy(r.proposition.date)} ${esc(r.proposition.heure)}</div>` : ''}</td>
+        <td><b>${esc(r.nom)}</b>${r.premiere ? ' <span class="badge or">1re fois</span>' : ''}${r.source === 'coach' ? ' <span class="badge">saisi</span>' : ''}<br><span style="font-size:13px">${telLink(r.tel)}</span></td>
+        <td><b>${esc(r.theme)}</b><div class="hint">${esc(r.format)}</div>${r.message ? `<div class="rv-msg">${esc(r.message)}</div>` : ''}${r.infos ? `<div class="hint" style="margin-top:4px"><b>Infos envoyées :</b> ${esc(r.infos)}</div>` : ''}${r.paiement && r.paiement.montant ? `<div class="hint"><b>Réglé :</b> ${F(r.paiement.montant)} · ${esc(r.paiement.mode)}</div>` : ''}${isCoach() && r.notePrivee ? `<div class="hint" style="margin-top:4px">🔒 ${esc(r.notePrivee.slice(0, 90))}${r.notePrivee.length > 90 ? '…' : ''}</div>` : ''}</td>
+        <td>${RDV_B[r.statut] || ''}</td>
+        <td><div class="acts">${rdvActions(r)}</div></td></tr>`).join('')}</tbody></table></div>` : '<div class="empty">Aucun rendez-vous ici.</div>'}</div>`;
+}
+function rdvActions(r) {
+  const a = [];
+  if (r.statut === 'demande') a.push(`<button class="btn vert sm" onclick="confirmerRdv(${r.id})">Confirmer</button>`, `<button class="btn ghost sm" onclick="proposerRdv(${r.id})">Autre horaire</button>`, `<button class="btn line sm" onclick="statutRdv(${r.id},'refuse')">Refuser</button>`);
+  if (r.statut === 'propose') a.push(`<button class="btn line sm" onclick="statutRdv(${r.id},'annule')">Annuler</button>`);
+  if (r.statut === 'confirme') a.push(`<button class="btn nuit sm" onclick="honorerRdv(${r.id})">Effectué</button>`, `<button class="btn ghost sm" onclick="statutRdv(${r.id},'absent')">Absent</button>`, `<button class="btn ghost sm" onclick="proposerRdv(${r.id})">Déplacer</button>`, `<button class="btn line sm" onclick="statutRdv(${r.id},'annule')">Annuler</button>`);
+  if (r.statut === 'honore') a.push(`<button class="btn ghost sm" onclick="honorerRdv(${r.id},true)">Paiement</button>`);
+  if (r.clientId) a.push(`<button class="btn line sm" onclick="showPanel('discussions');openConv(${r.clientId})">Écrire</button>`);
+  if (isCoach()) a.push(`<button class="btn line sm" onclick="noteRdv(${r.id})" title="Note privée (visible par le coach uniquement)">🔒 Note</button>`);
+  return a.join('');
+}
+function confirmerRdv(id) {
+  const r = byId(G.rdvs, id); const c = G.coach;
+  const def = /visio|ligne/i.test(r.format) ? 'Le lien de la visio vous sera envoyé ici, dans la discussion, avant la séance.' : /t[ée]l[ée]phone|whatsapp/i.test(r.format) ? `Le coach vous appellera au ${r.tel || 'numéro indiqué'} à l’heure du rendez-vous.` : (c.adresse ? 'Adresse : ' + c.adresse : '');
+  openModal(`<div class="mt h">Confirmer le rendez-vous</div><p class="hint">${esc(r.nom)} · ${esc(dLong(r.date))} à ${esc(r.heure)} · ${esc(r.format)}</p>
+    <div class="fld" style="margin-top:14px"><label>Infos pratiques envoyées à la personne</label><textarea id="cf-i" rows="3">${esc(r.infos || def)}</textarea></div>
+    <div class="fld"><label>Petit mot (facultatif)</label><input id="cf-m" value="Avec plaisir, à très bientôt."></div>
+    <div class="mfoot"><button class="btn vert big" onclick="statutRdv(${id},'confirme',{infos:$('cf-i').value,reponse:$('cf-m').value})">Confirmer et prévenir</button></div>`);
+}
+async function proposerRdv(id) {
+  const r = byId(G.rdvs, id);
+  openModal(`<div class="mt h">Proposer un autre horaire</div><p class="hint">${esc(r.nom)} avait demandé ${esc(dLong(r.date))} à ${esc(r.heure)}.</p>
+    <div class="row" style="margin-top:14px"><div class="fld"><label>Date</label><input type="date" id="pp-d" value="${r.date}" min="${todayStr()}" onchange="ppSlots(${id})"></div></div>
+    <div class="fld"><label>Horaire</label><div class="slots" id="pp-s"><span class="hint">Chargement…</span></div></div>
+    <div class="fld"><label>Message (facultatif)</label><input id="pp-m" placeholder="Ex. : je ne suis pas disponible à cette heure, ce créneau vous convient-il ?"></div>
+    <div class="err" id="pp-e"></div><div class="mfoot"><button class="btn big" onclick="sendProposition(${id})">Envoyer la proposition</button></div>`);
+  ppSlots(id);
+}
+let PP = '';
+async function ppSlots(id) {
+  const d = $('pp-d').value; PP = '';
+  try {
+    const r = await api('/api/public/disponibilites?from=' + d + '&jours=1');
+    const j = r.jours[0];
+    $('pp-s').innerHTML = !j || j.ferme ? '<span class="hint">Jour fermé (voir Agenda & horaires).</span>' : j.libres.concat(j.complets).sort().map(h => `<button ${j.libres.includes(h) ? '' : 'disabled'} onclick="PP='${h}';document.querySelectorAll('#pp-s button').forEach(b=>b.classList.toggle('on',b.textContent==='${h}'))">${h}</button>`).join('') || '<span class="hint">Aucun créneau.</span>';
+  } catch (e) { $('pp-s').innerHTML = `<span class="hint">${esc(e.message)}</span>`; }
+}
+function sendProposition(id) { if (!PP) return $('pp-e').textContent = 'Choisissez un horaire.'; statutRdv(id, 'propose', { date: $('pp-d').value, heure: PP, reponse: $('pp-m').value }); }
+function honorerRdv(id, edit) {
+  const r = byId(G.rdvs, id); const p = r.paiement || {};
+  openModal(`<div class="mt h">${edit ? 'Paiement de la séance' : 'Séance effectuée'}</div><p class="hint">${esc(r.nom)} · ${esc(dLong(r.date))} à ${esc(r.heure)}</p>
+    <div class="row" style="margin-top:14px"><div class="fld"><label>Montant réglé (F CFA)</label><input type="number" id="hp-m" value="${p.montant || ''}" placeholder="0 si offert"></div>
+      <div class="fld"><label>Mode</label><select id="hp-p">${PAYS.map(x => `<option ${p.mode === x ? 'selected' : ''}>${x}</option>`).join('')}</select></div></div>
+    <div class="mfoot"><button class="btn nuit big" onclick="${edit ? `savePaiement(${id})` : `statutRdv(${id},'honore',{paiement:{montant:$('hp-m').value,mode:$('hp-p').value}})`}">Enregistrer</button></div>`);
+}
+async function savePaiement(id) { try { const r = await api(`/api/admin/rdv/${id}/paiement`, { method: 'PUT', body: { montant: $('hp-m').value, mode: $('hp-p').value } }); upsert(G.rdvs, r.rdv); closeModal(); render(); } catch (e) { toast('Erreur', e.message, true); } }
+async function statutRdv(id, st, extra) {
+  const body = Object.assign({ statut: st }, extra || {});
+  if ((st === 'refuse' || st === 'annule') && body.reponse === undefined) { const m = prompt('Message à la personne (facultatif) :', st === 'refuse' ? 'Je ne suis pas disponible à ce moment-là. N’hésitez pas à choisir un autre créneau.' : 'Je dois malheureusement annuler ce rendez-vous. Choisissons un autre moment.'); if (m === null) return; body.reponse = m; }
+  try { const r = await api('/api/admin/rdv/' + id, { body }); upsert(G.rdvs, r.rdv); closeModal(); render(); toast('Rendez-vous mis à jour', r.rdv.clientId ? 'La personne est prévenue.' : ''); }
+  catch (e) { const el = $('pp-e'); if (el) el.textContent = e.message; else toast('Erreur', e.message, true); }
+}
+function noteRdv(id) {
+  const r = byId(G.rdvs, id);
+  openModal(`<div class="mt h">Note privée</div><p class="hint">${esc(r.nom)} · ${esc(dLong(r.date))}. Visible uniquement par le coach, jamais par la personne ni les assistant(e)s.</p>
+    <div class="fld" style="margin-top:12px"><textarea id="nt" rows="9">${esc(r.notePrivee || '')}</textarea></div>
+    <div class="mfoot"><button class="btn nuit" onclick="saveNote(${id})">Enregistrer</button></div>`);
+}
+async function saveNote(id) { try { const r = await api(`/api/admin/rdv/${id}/note`, { method: 'PUT', body: { notePrivee: $('nt').value } }); upsert(G.rdvs, r.rdv); closeModal(); render(); } catch (e) { toast('Erreur', e.message, true); } }
+function editRdvManuel(clientId) {
+  const c = clientId ? clientOf(clientId) : null;
+  openModal(`<div class="mt h">Ajouter un rendez-vous</div><p class="hint">Pour un rendez-vous pris par téléphone ou WhatsApp. Si la personne a un espace sur le site (même numéro), elle est prévenue.</p>
+    <div class="row" style="margin-top:12px"><div class="fld"><label>Nom</label><input id="rm-n" value="${esc(c ? c.nom : '')}"></div><div class="fld"><label>Téléphone</label><input id="rm-t" value="${esc(c ? c.tel : '')}"></div></div>
+    <div class="row"><div class="fld"><label>Sujet</label><select id="rm-th"><option value="0">Séance</option>${G.themes.map(t => `<option value="${t.id}">${esc(t.nom)}</option>`).join('')}</select></div>
+      <div class="fld"><label>Format</label><select id="rm-f">${G.coach.rdv.formats.map(f => `<option>${esc(f)}</option>`).join('')}</select></div></div>
+    <div class="row"><div class="fld"><label>Date</label><input type="date" id="rm-d" value="${todayStr()}"></div><div class="fld"><label>Heure</label><input type="time" id="rm-h" value="${G.coach.rdv.creneaux[0] || '09:00'}"></div></div>
+    <div class="fld"><label>Infos / notes</label><input id="rm-i" placeholder="Facultatif"></div>
+    <div class="err" id="rm-e"></div><div class="mfoot"><button class="btn big" onclick="saveRdvManuel(${clientId || 0})">Enregistrer</button></div>`);
+}
+async function saveRdvManuel(clientId, forcer) {
+  const body = { clientId, nom: $('rm-n').value, tel: $('rm-t').value, themeId: $('rm-th').value, format: $('rm-f').value, date: $('rm-d').value, heure: $('rm-h').value, infos: $('rm-i').value, forcer: !!forcer };
+  try { const r = await api('/api/admin/rdv', { body }); upsert(G.rdvs, r.rdv); closeModal(); RF = 'venir'; showPanel('rdv'); toast('Rendez-vous ajouté', ''); }
+  catch (e) { if (/déjà pris/.test(e.message) && confirm(e.message + ' Enregistrer quand même ?')) return saveRdvManuel(clientId, true); $('rm-e').textContent = e.message; }
+}
+
+// ===================================================================
+// DISCUSSIONS
+// ===================================================================
+let CUR = null, CF = 'toutes';
+function renderDiscussions(keep) {
+  const convs = {};
+  G.chats.forEach(m => { (convs[m.clientId] = convs[m.clientId] || []).push(m); });
+  let ids = Object.keys(convs).map(Number).sort((a, b) => { const la = convs[a][convs[a].length - 1], lb = convs[b][convs[b].length - 1]; return lb.at.localeCompare(la.at); });
+  const lastCible = id => { const ms = convs[id].filter(m => m.de === 'client'); return ms.length ? ms[ms.length - 1].cible : ''; };
+  const filt = { toutes: () => true, nonlues: id => convs[id].some(m => m.de === 'client' && !m.lu), coach: id => lastCible(id) === 'coach', equipe: id => lastCible(id) === 'equipe' }[CF];
+  ids = ids.filter(filt);
+  if (CUR && !convs[CUR]) convs[CUR] = [];
+  if (!CUR && ids.length) CUR = ids[0];
+  const list = CUR && !ids.includes(CUR) ? [CUR].concat(ids) : ids;
+  const thread = CUR ? (convs[CUR] || []) : [];
+  const c = CUR ? clientOf(CUR) : null;
+  const input = $('th-in'); const draft = input ? input.value : ''; const hadFocus = input && document.activeElement === input;
+  const nRdv = CUR ? G.rdvs.filter(r => r.clientId === CUR).length : 0;
+  const quick = ['Bonjour, merci pour votre message. Je suis là pour vous écouter.', 'Souhaitez-vous que nous fixions un rendez-vous ?', `Vous pouvez choisir un créneau directement sur le site, rubrique « Prendre rendez-vous ».`, 'Prenez soin de vous. Je reviens vers vous très vite.'];
+  $('p-discussions').innerHTML = `<div class="ph-t"><div><div class="h">Discussions</div><p>Messages reçus depuis le site. La personne reçoit votre réponse en direct et en notification. Votre nom s’affiche au-dessus de vos messages.</p></div></div>
+    <div class="chatw"><div class="convs"><div class="cv-f">${[['toutes', 'Toutes'], ['nonlues', 'Non lues'], ['coach', 'Pour le coach'], ['equipe', 'Pour l’équipe']].map(([k, l]) => `<button class="${CF === k ? 'on' : ''}" onclick="CF='${k}';CUR=null;renderDiscussions()">${l}</button>`).join('')}</div>
+      ${list.length ? list.map(id => { const ms = convs[id] || []; const last = ms[ms.length - 1]; const un = ms.filter(m => m.de === 'client' && !m.lu).length; const cl = clientOf(id); const cb = lastCible(id);
+        return `<div class="conv ${id === CUR ? 'on' : ''}" onclick="openConv(${id})"><div class="av">${esc((cl.nom || '?')[0].toUpperCase())}</div><div class="ci"><b>${esc(cl.nom)}${cl.invite ? ' <span class="badge" style="font-size:10px;padding:2px 6px">visiteur</span>' : ''}</b>${cb ? `<span class="tg">→ ${cb === 'coach' ? 'le coach' : 'l’équipe'}</span>` : ''}<small>${last ? esc((last.de === 'client' ? '' : (last.auteur || 'Vous') + ' : ') + last.texte) : 'Nouvelle discussion'}</small></div>${un ? `<span class="cnt">${un}</span>` : ''}</div>`; }).join('') : '<div class="empty">Aucune discussion.</div>'}</div>
+    <div class="thread">${CUR ? `<div class="thread-h"><span><b>${esc(c.nom)}</b> ${c.tel ? `· ${telLink(c.tel)}` : '<span class="hint">· pas de numéro</span>'}</span><span class="row" style="gap:6px"><span class="badge">${nRdv} rendez-vous</span><button class="btn ghost sm" onclick="fichePersonne(${CUR})">Fiche</button><button class="btn sm" onclick="editRdvManuel(${CUR})">+ RDV</button></span></div>
+      <div class="msgs" id="msgs">${thread.map(m => `<div class="msg ${m.de === 'client' ? 'cl' : 're'} ${m.auto ? 'auto' : ''}">${m.de === 'client' ? (m.cible ? `<span class="au">pour ${m.cible === 'coach' ? 'le coach' : 'l’équipe'}</span>` : '') : `<span class="au">${esc(m.auto ? 'Réponse automatique' : m.auteur || '')}</span>`}${esc(m.texte)}<time>${fdt(m.at)}</time></div>`).join('') || '<div class="empty">Écrivez le premier message.</div>'}</div>
+      <div class="quick">${quick.map((q, i) => `<button onclick="$('th-in').value=${esc(JSON.stringify(q))};$('th-in').focus()">${['Accueil', 'Proposer un RDV', 'Lien RDV', 'À bientôt'][i]}</button>`).join('')}</div>
+      <div class="thread-f"><textarea id="th-in" rows="1" placeholder="Votre réponse… (Entrée pour envoyer, Maj+Entrée pour aller à la ligne)" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}"></textarea><button class="btn" onclick="sendChat()">Envoyer</button></div>` : '<div class="empty" style="margin:auto">Sélectionnez une discussion.</div>'}</div></div>`;
+  const ms = $('msgs'); if (ms) ms.scrollTop = ms.scrollHeight;
+  const ni = $('th-in'); if (ni) { ni.value = draft; if (hadFocus || !keep) ni.focus(); }
+  if (CUR && !document.hidden && thread.some(m => m.de === 'client' && !m.lu)) { thread.forEach(m => { if (m.de === 'client') m.lu = true; }); api(`/api/admin/chat/${CUR}/lu`, { body: {} }).catch(() => { }); badges(); }
+}
+function openConv(id) { CUR = id; CF = 'toutes'; const i = $('th-in'); if (i) i.value = ''; renderDiscussions(); }
+async function sendChat() {
+  const i = $('th-in'); const t = i.value.trim(); if (!t) return;
+  try { const r = await api('/api/admin/chat/' + CUR, { body: { texte: t } }); i.value = ''; upsert(G.chats, r.message); renderDiscussions(); } catch (e) { toast('Erreur', e.message, true); }
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden && P === 'discussions') renderDiscussions(true); });
+
+// ===================================================================
+// DEVIS
+// ===================================================================
+function rDevis() {
+  const ord = { nouveau: 0, accepte: 1, propose: 2, refuse: 3, termine: 4 };
+  const list = G.devis.slice().sort((a, b) => (ord[a.statut] - ord[b.statut]) || b.id - a.id);
+  const B = { nouveau: '<span class="badge rouge">Nouveau</span>', propose: '<span class="badge or">Proposition envoyée</span>', accepte: '<span class="badge vert">Accepté</span>', refuse: '<span class="badge">Refusé</span>', termine: '<span class="badge nuit">Réalisé</span>' };
+  $('p-devis').innerHTML = `<div class="ph-t"><div><div class="h">Devis de formation</div><p>Entreprises, églises, associations… Envoyez une proposition chiffrée : la personne l’accepte depuis son espace.</p></div></div>
+    ${list.length ? `<div class="devis">${list.map(d => `<div class="card dv"><div class="card-t" style="font-size:22px"><span>${esc(d.theme)}</span>${B[d.statut] || ''}</div>
+      <div class="k"><span>Contact</span><b>${esc(d.nom)}</b></div><div class="k"><span>Téléphone</span><b>${telLink(d.tel)}</b></div>${d.email ? `<div class="k"><span>E-mail</span><b><a href="mailto:${esc(d.email)}">${esc(d.email)}</a></b></div>` : ''}
+      <div class="k"><span>Structure</span><b>${esc(d.typeStructure)}${d.structure ? ' · ' + esc(d.structure) : ''}</b></div>
+      <div class="k"><span>Participants</span><b>${d.participants}</b></div>${d.date ? `<div class="k"><span>Date souhaitée</span><b>${dmy(d.date)}</b></div>` : ''}
+      <div class="k"><span>Durée · format</span><b>${esc(d.duree)} · ${esc(d.format)}</b></div>${d.lieu ? `<div class="k"><span>Lieu</span><b>${esc(d.lieu)}</b></div>` : ''}
+      ${d.budget ? `<div class="k"><span>Budget indiqué</span><b>${F(d.budget)}</b></div>` : ''}
+      ${d.description ? `<div class="desc">${esc(d.description)}</div>` : ''}
+      ${d.montant ? `<div class="k"><span>Votre proposition</span><b style="font-size:17px">${F(d.montant)}</b></div>` : ''}${d.reponse ? `<p class="hint" style="margin-top:6px;white-space:pre-wrap">${esc(d.reponse)}</p>` : ''}
+      <div class="row" style="margin-top:12px">${d.statut === 'nouveau' || d.statut === 'propose' ? `<button class="btn" onclick="proposerDevis(${d.id})">${d.statut === 'nouveau' ? 'Faire une proposition' : 'Modifier'}</button><button class="btn ghost" onclick="devisSt(${d.id},'refuse')">Décliner</button>` : ''}
+      ${d.statut === 'accepte' ? `<button class="btn vert" onclick="devisSt(${d.id},'termine')">Marquer réalisé</button>` : ''}
+      ${d.clientId ? `<button class="btn line" onclick="showPanel('discussions');openConv(${d.clientId})">Écrire</button>` : ''}</div></div>`).join('')}</div>` : '<div class="card empty">Aucune demande de devis pour l’instant.</div>'}`;
+}
+function proposerDevis(id) {
+  const d = byId(G.devis, id);
+  openModal(`<div class="mt h">Proposition — ${esc(d.theme)}</div><p class="hint">${esc(d.typeStructure)} · ${d.participants} participants · ${esc(d.duree)}</p>
+    <div class="fld" style="margin-top:12px"><label>Montant total (F CFA)</label><input type="number" id="dv-m" value="${d.montant || ''}"></div>
+    <div class="fld"><label>Détail de la proposition</label><textarea id="dv-r" rows="7" placeholder="Programme, durée, supports remis, modalités de paiement (ex. : acompte de 50 % à la confirmation)…">${esc(d.reponse || '')}</textarea></div>
+    <div class="err" id="dv-e"></div><div class="mfoot"><button class="btn big" onclick="devisSt(${id},'propose')">Envoyer la proposition</button></div>`);
+}
+async function devisSt(id, st) {
+  const body = { statut: st };
+  if (st === 'propose') { body.montant = Number($('dv-m').value); body.reponse = $('dv-r').value; if (!body.montant) return $('dv-e').textContent = 'Indiquez un montant.'; }
+  if (st === 'refuse') { const r = prompt('Message :', 'Merci pour votre demande. Nous ne sommes malheureusement pas disponibles pour cette intervention.'); if (r === null) return; body.reponse = r; }
+  try { const r = await api('/api/admin/devis/' + id, { body }); upsert(G.devis, r.devis); closeModal(); render(); if (st === 'propose') toast('Proposition envoyée', 'La personne est prévenue.'); } catch (e) { toast('Erreur', e.message, true); }
+}
+
+// ===================================================================
+// ATELIERS
+// ===================================================================
+function rAteliers() {
+  const td = todayStr();
+  const evs = G.evenements.slice().sort((a, b) => (b.date >= td) - (a.date >= td) || (a.date >= td ? a.date.localeCompare(b.date) : b.date.localeCompare(a.date)));
+  $('p-ateliers').innerHTML = `<div class="ph-t"><div><div class="h">Ateliers & événements</div><p>Séances de groupe, conférences, rencontres. Ils apparaissent sur le site avec un bouton d’inscription et le nombre de places restantes.</p></div><button class="btn" onclick="editEv()">+ Nouvel atelier</button></div>
+    <div class="card lst">${evs.length ? evs.map(e => { const ins = G.inscriptions.filter(i => i.evenementId === e.id && i.statut !== 'annulee'); const nv = ins.filter(i => i.statut === 'inscrit').length; const n = ins.reduce((s, i) => s + i.places, 0);
+      return `<div class="li ${e.actif && e.date >= td ? '' : 'off'}"><div class="thumb" style="${e.image ? '' : 'background:var(--nuit);color:var(--or2);font-family:var(--fd);font-size:24px;font-weight:700'}">${e.image ? `<img src="${esc(e.image)}">` : new Date(e.date + 'T12:00:00').getDate()}</div>
+        <div class="tx"><b>${esc(e.titre)}</b><small>${esc(dLong(e.date))}${e.heure ? ' · ' + esc(e.heure) : ''}${e.lieu ? ' · ' + esc(e.lieu) : ''} · ${esc(e.prix || 'Gratuit')}</small></div>
+        <span class="badge ${n ? 'vert' : ''}">${n}${e.places ? ' / ' + e.places : ''} inscrit(s)</span>${nv ? `<span class="cnt">${nv}</span>` : ''}
+        <button class="btn ghost sm" onclick="inscrits(${e.id})">Inscrits</button><button class="btn line sm" onclick="editEv(${e.id})">Modifier</button></div>`; }).join('') : '<div class="empty">Aucun atelier. Créez le premier !</div>'}</div>`;
+}
+let EE = null;
+function editEv(id) {
+  const e = id ? byId(G.evenements, id) : null;
+  EE = e ? Object.assign({}, e) : { titre: '', date: addDays(todayStr(), 14), heure: '15:00', lieu: '', format: 'Présentiel', public: '', prix: '', places: 20, description: '', image: '', actif: true };
+  EE._id = id || 0;
+  openModal(`<div class="mt h">${id ? 'Modifier l’atelier' : 'Nouvel atelier'}</div><div class="grid2">
+    <div><div class="fld"><label>Titre</label><input value="${esc(EE.titre)}" oninput="EE.titre=this.value" placeholder="Ex. : Renaître après la séparation"></div>
+      <div class="row"><div class="fld"><label>Date</label><input type="date" value="${esc(EE.date)}" oninput="EE.date=this.value"></div><div class="fld"><label>Heure</label><input type="time" value="${esc(EE.heure)}" oninput="EE.heure=this.value"></div></div>
+      <div class="fld"><label>Lieu</label><input value="${esc(EE.lieu)}" oninput="EE.lieu=this.value" placeholder="Commune, salle…"></div>
+      <div class="row"><div class="fld"><label>Format</label><select onchange="EE.format=this.value">${['Présentiel', 'En ligne', 'Présentiel et en ligne'].map(f => `<option ${EE.format === f ? 'selected' : ''}>${f}</option>`).join('')}</select></div><div class="fld"><label>Places (0 = illimité)</label><input type="number" value="${EE.places}" oninput="EE.places=this.value"></div></div>
+      <div class="row"><div class="fld"><label>Participation</label><input value="${esc(EE.prix)}" oninput="EE.prix=this.value" placeholder="Ex. : 10 000 F CFA ou Gratuit"></div><div class="fld"><label>Public</label><input value="${esc(EE.public)}" oninput="EE.public=this.value" placeholder="Ex. : Célibataires 50–60 ans"></div></div></div>
+    <div><div class="fld"><label>Image</label><div class="prev" id="ee-prev" style="height:170px;${EE.image ? `background-image:url('${esc(EE.image)}')` : ''}"></div><input type="file" accept="image/*" style="margin-top:8px" onchange="pickImg(this,'ee-prev',u=>EE.image=u)"></div>
+      <label class="sw-l"><button class="sw ${EE.actif ? 'on' : ''}" onclick="EE.actif=!EE.actif;this.classList.toggle('on')"></button> Visible sur le site</label></div></div>
+    <div class="fld" style="margin-top:10px"><label>Description</label><textarea rows="5" oninput="EE.description=this.value" placeholder="Programme, ce que les participants vont vivre, ce qu’il faut apporter…">${esc(EE.description)}</textarea></div>
+    <div class="err" id="ee-e"></div><div class="mfoot">${id ? `<button class="btn ghost" onclick="delItem('evenements','evenements',${id})">Supprimer</button>` : ''}<button class="btn big" onclick="saveItem('evenements','evenements',EE,'ee-e')">Enregistrer</button></div>`, true);
+}
+const IN_B = { inscrit: '<span class="badge or">Nouvelle</span>', confirme: '<span class="badge vert">Confirmée</span>', present: '<span class="badge nuit">Présent(e)</span>', annulee: '<span class="badge">Annulée</span>' };
+function inscrits(id) {
+  const e = byId(G.evenements, id); const ins = G.inscriptions.filter(i => i.evenementId === id).sort((a, b) => a.at.localeCompare(b.at));
+  openModal(`<div class="mt h">Inscrits — ${esc(e.titre)}</div><p class="hint">${esc(dLong(e.date))} · ${ins.filter(i => i.statut !== 'annulee').reduce((s, i) => s + i.places, 0)} place(s) réservée(s)${e.places ? ' sur ' + e.places : ''}</p>
+    ${ins.length ? `<div class="tbl-wrap" style="margin-top:12px"><table class="tbl"><thead><tr><th>Personne</th><th class="num">Places</th><th>Statut</th><th></th></tr></thead><tbody>${ins.map(i => `<tr><td><b>${esc(i.nom)}</b><br><span style="font-size:13px">${telLink(i.tel)}</span>${i.note ? `<div class="hint">${esc(i.note)}</div>` : ''}${i.montant ? `<div class="hint">Réglé : ${F(i.montant)}</div>` : ''}</td><td class="num">${i.places}</td><td>${IN_B[i.statut] || ''}</td>
+      <td><div class="acts">${i.statut === 'inscrit' ? `<button class="btn vert sm" onclick="insSt(${i.id},'confirme')">Confirmer</button>` : ''}${i.statut === 'confirme' ? `<button class="btn nuit sm" onclick="insSt(${i.id},'present')">Présent(e)</button>` : ''}${i.statut !== 'annulee' ? `<button class="btn line sm" onclick="insSt(${i.id},'annulee')">Annuler</button>` : ''}</div></td></tr>`).join('')}</tbody></table></div>` : '<div class="empty">Personne n’est encore inscrit.</div>'}`, true);
+}
+async function insSt(id, st) {
+  const body = { statut: st };
+  if (st === 'confirme') { const m = prompt('Montant réglé (F CFA), laissez vide si rien :', ''); if (m === null) return; if (m) body.montant = Number(m); }
+  if (st === 'annulee') { const m = prompt('Message à la personne (facultatif) :', ''); if (m === null) return; body.message = m; }
+  try { const r = await api('/api/admin/inscriptions/' + id, { body }); upsert(G.inscriptions, r.inscription); inscrits(r.inscription.evenementId); badges(); } catch (e) { toast('Erreur', e.message, true); }
+}
+
+// ===================================================================
+// CONTENUS : enregistrement générique
+// ===================================================================
+async function saveItem(base, coll, obj, errId) {
+  const body = Object.assign({}, obj); const id = body._id; delete body._id; delete body.id;
+  try {
+    const r = id ? await api(`/api/admin/${base}/${id}`, { method: 'PUT', body }) : await api(`/api/admin/${base}`, { body });
+    upsert(G[coll], r.item); closeModal(); render(); toast('Enregistré', 'Visible tout de suite sur le site.');
+  } catch (e) { const el = $(errId); if (el) el.textContent = e.message; else toast('Erreur', e.message, true); }
+}
+async function patchItem(base, coll, id, body) { try { const r = await api(`/api/admin/${base}/${id}`, { method: 'PUT', body }); upsert(G[coll], r.item); render(); } catch (e) { toast('Erreur', e.message, true); } }
+async function delItem(base, coll, id) { if (!confirm('Supprimer définitivement ?')) return; try { await api(`/api/admin/${base}/${id}/delete`, { body: {} }); G[coll] = G[coll].filter(x => x.id !== id); closeModal(); render(); } catch (e) { toast('Impossible', e.message, true); } }
+async function moveItem(base, coll, id, d) {
+  const xs = G[coll].slice().sort((a, b) => a.ordre - b.ordre); const i = xs.findIndex(x => x.id === id), j = i + d; if (j < 0 || j >= xs.length) return;
+  [xs[i], xs[j]] = [xs[j], xs[i]];
+  for (let k = 0; k < xs.length; k++) if (xs[k].ordre !== k + 1) { const r = await api(`/api/admin/${base}/${xs[k].id}`, { method: 'PUT', body: { ordre: k + 1 } }); upsert(G[coll], r.item); }
+  render();
+}
+const COLS = [['nuit', '#0E2230'], ['bleu', '#154A5C'], ['or', '#E9DCC2']];
+const colPick = (name, cur, redraw) => `<div class="colpick">${COLS.map(([k, c]) => `<button class="${cur === k ? 'on' : ''}" style="background:${c}" title="${k}" onclick="${name}.couleur='${k}';${redraw}()"></button>`).join('')}</div>`;
+
+// ---------- Accompagnements ----------
+function rThemes() {
+  const ts = G.themes.slice().sort((a, b) => a.ordre - b.ordre);
+  $('p-themes').innerHTML = `<div class="ph-t"><div><div class="h">Accompagnements</div><p>Les thèmes présentés sur le site (cartes, bande défilante, choix lors de la prise de rendez-vous).</p></div><button class="btn" onclick="editTheme()">+ Nouvel accompagnement</button></div>
+    <div class="card lst">${ts.map((t, i) => `<div class="li ${t.actif ? '' : 'off'}"><div class="thumb" style="background:${(COLS.find(c => c[0] === t.couleur) || COLS[1])[1]}">${t.image ? `<img src="${esc(t.image)}">` : ''}</div>
+      <div class="tx"><b>${esc(t.nom)}</b><small>${esc(t.accroche)}${t.publicCible ? ' · ' + esc(t.publicCible) : ''}</small></div>
+      <button class="sw ${t.actif ? 'on' : ''}" onclick="patchItem('themes','themes',${t.id},{actif:${!t.actif}})" title="Visible sur le site"></button>
+      <button class="xbtn" onclick="moveItem('themes','themes',${t.id},-1)" ${i ? '' : 'disabled'}>↑</button><button class="xbtn" onclick="moveItem('themes','themes',${t.id},1)" ${i < ts.length - 1 ? '' : 'disabled'}>↓</button>
+      <button class="btn line sm" onclick="editTheme(${t.id})">Modifier</button></div>`).join('')}</div>`;
+}
+let ET = null;
+function editTheme(id) { const t = id ? byId(G.themes, id) : null; ET = t ? Object.assign({}, t) : { nom: '', accroche: '', description: '', publicCible: '', couleur: 'bleu', image: '', actif: true }; ET._id = id || 0; drawTheme(); }
+function drawTheme() {
+  openModal(`<div class="mt h">${ET._id ? 'Modifier' : 'Nouvel'} accompagnement</div><div class="grid2">
+    <div><div class="fld"><label>Nom</label><input value="${esc(ET.nom)}" oninput="ET.nom=this.value"></div>
+      <div class="fld"><label>Accroche (une phrase)</label><input value="${esc(ET.accroche)}" oninput="ET.accroche=this.value"></div>
+      <div class="fld"><label>Public concerné (facultatif)</label><input value="${esc(ET.publicCible)}" oninput="ET.publicCible=this.value" placeholder="Ex. : Mères célibataires"></div>
+      <div class="fld"><label>Couleur de la carte</label>${colPick('ET', ET.couleur, 'drawTheme')}</div></div>
+    <div><div class="fld"><label>Photo (facultatif)</label><div class="prev" id="et-prev" style="height:160px;${ET.image ? `background-image:url('${esc(ET.image)}')` : ''}"></div><div class="row" style="margin-top:8px"><input type="file" accept="image/*" onchange="pickImg(this,'et-prev',u=>ET.image=u)">${ET.image ? `<button class="btn ghost sm" onclick="ET.image='';drawTheme()">Retirer</button>` : ''}</div></div></div></div>
+    <div class="fld"><label>Description détaillée</label><textarea rows="6" oninput="ET.description=this.value">${esc(ET.description)}</textarea></div>
+    <div class="err" id="et-e"></div><div class="mfoot">${ET._id ? `<button class="btn ghost" onclick="delItem('themes','themes',${ET._id})">Supprimer</button>` : ''}<button class="btn big" onclick="saveItem('themes','themes',ET,'et-e')">Enregistrer</button></div>`, true);
+}
+
+// ---------- Bannière défilante ----------
+const emph = s => esc(s).replace(/\*([^*]+)\*/g, '<em>$1</em>');
+const banHtml = b => `<div class="ban ${b.image ? 'has-img' : esc(b.couleur)}">${b.image ? `<img class="bg" src="${esc(b.image)}">` : '<img class="lau" src="/img/laurier.webp">'}<div class="bt">${b.surtitre ? `<small>${esc(b.surtitre)}</small>` : ''}${b.titre ? `<div class="h">${emph(b.titre)}</div>` : ''}${b.texte ? `<p>${esc(b.texte)}</p>` : ''}</div></div>`;
+const LIENS = [['rdv', 'Prendre rendez-vous'], ['theme', 'Un accompagnement'], ['chat', 'La discussion en ligne'], ['devis', 'Demande de devis'], ['ateliers', 'Les ateliers'], ['coach', 'Présentation du coach'], ['whatsapp', 'WhatsApp'], ['aucun', 'Aucun bouton']];
+function rBanners() {
+  const bs = G.banners.slice().sort((a, b) => a.ordre - b.ordre);
+  $('p-bannieres').innerHTML = `<div class="ph-t"><div><div class="h">Bannière défilante</div><p>Les grandes images qui défilent en haut du site. Téléversez une photo : elle apparaît aussitôt. Sans photo, le fond prend les couleurs du logo avec la couronne de laurier.</p></div><button class="btn" onclick="editBan()">+ Nouvelle diapositive</button></div>
+    ${bs.length ? `<div class="bans">${bs.map((b, i) => `<div class="ban-c ${b.actif ? '' : 'off'}">${banHtml(b)}<div class="ban-a">
+      <button class="sw ${b.actif ? 'on' : ''}" onclick="patchItem('banners','banners',${b.id},{actif:${!b.actif}})"></button><span style="font-weight:700;font-size:13px;flex:1">${b.actif ? 'En ligne' : 'Masquée'} · ${esc((LIENS.find(l => l[0] === b.lien) || ['', ''])[1])}${b.lien === 'theme' ? ' : ' + esc(nomTheme(b.themeId)) : ''}</span>
+      <button class="xbtn" onclick="moveItem('banners','banners',${b.id},-1)" ${i ? '' : 'disabled'}>←</button><button class="xbtn" onclick="moveItem('banners','banners',${b.id},1)" ${i < bs.length - 1 ? '' : 'disabled'}>→</button>
+      <button class="btn ghost sm" onclick="editBan(${b.id})">Modifier</button></div></div>`).join('')}</div>` : '<div class="card empty">Aucune diapositive.</div>'}
+    <p class="hint" style="margin-top:14px">Astuce : entourez un mot d’astérisques pour le mettre en italique doré, par exemple « Il n’est jamais trop tard pour *renaître*. » Image conseillée : horizontale, environ 1 600 × 900.</p>`;
+}
+let EB = null;
+function editBan(id) { const b = id ? byId(G.banners, id) : null; EB = b ? Object.assign({}, b) : { surtitre: '', titre: '', texte: '', image: '', couleur: 'nuit', lien: 'rdv', themeId: 0, actif: true }; EB._id = id || 0; drawBan(); }
+function drawBan() {
+  const up = "$('eb-prev').innerHTML=banHtml(EB)";
+  openModal(`<div class="mt h">${EB._id ? 'Modifier la diapositive' : 'Nouvelle diapositive'}</div><div id="eb-prev">${banHtml(EB)}</div>
+    <div class="fld" style="margin-top:14px"><label>Photo</label><div class="row"><input type="file" accept="image/*" onchange="pickBanImg(this)">${EB.image ? '<button class="btn ghost sm" onclick="EB.image=\'\';drawBan()">Retirer la photo</button>' : ''}</div></div>
+    <div class="fld"><label>Petit titre (thème)</label><input value="${esc(EB.surtitre)}" oninput="EB.surtitre=this.value;${up}" placeholder="Ex. : Mères célibataires"></div>
+    <div class="fld"><label>Grand titre</label><input value="${esc(EB.titre)}" oninput="EB.titre=this.value;${up}"></div>
+    <div class="fld"><label>Texte</label><input value="${esc(EB.texte)}" oninput="EB.texte=this.value;${up}"></div>
+    <div class="row"><div class="fld"><label>Fond (sans photo)</label>${colPick('EB', EB.couleur, 'drawBan')}</div>
+      <div class="fld"><label>Le bouton ouvre</label><select onchange="EB.lien=this.value;drawBan()">${LIENS.map(([k, l]) => `<option value="${k}" ${EB.lien === k ? 'selected' : ''}>${l}</option>`).join('')}</select></div>
+      ${EB.lien === 'theme' ? `<div class="fld"><label>Accompagnement</label><select onchange="EB.themeId=Number(this.value)">${G.themes.map(t => `<option value="${t.id}" ${EB.themeId === t.id ? 'selected' : ''}>${esc(t.nom)}</option>`).join('')}</select></div>` : ''}</div>
+    <div class="err" id="eb-e"></div><div class="mfoot">${EB._id ? `<button class="btn ghost" onclick="delItem('banners','banners',${EB._id})">Supprimer</button>` : ''}<button class="btn big" onclick="if(EB.lien==='theme'&&!EB.themeId)EB.themeId=(G.themes[0]||{}).id;saveItem('banners','banners',EB,'eb-e')">Publier</button></div>`, true);
+}
+async function pickBanImg(input) { const f = input.files[0]; if (!f) return; try { $('eb-prev').style.opacity = .4; EB.image = await uploadImage(f, 1800); drawBan(); } catch (e) { toast('Image', e.message, true); $('eb-prev').style.opacity = 1; } }
+
+// ---------- Témoignages ----------
+function rTem() {
+  const ts = G.temoignages.slice().sort((a, b) => (a.publie - b.publie) || b.at.localeCompare(a.at));
+  $('p-temoignages').innerHTML = `<div class="ph-t"><div><div class="h">Témoignages</div><p>Les témoignages envoyés depuis le site attendent votre relecture avant publication. Ne publiez que des témoignages réels, avec l’accord de la personne.</p></div><button class="btn" onclick="editTem()">+ Ajouter un témoignage reçu</button></div>
+    <div class="card lst">${ts.length ? ts.map(t => `<div class="li ${t.publie ? '' : ''}"><div class="tx"><b>${esc(t.nom)}${t.theme ? ` <span class="hint">· ${esc(t.theme)}</span>` : ''}</b><p style="font-family:var(--fd);font-size:19px;font-style:italic;margin-top:4px">« ${esc(t.texte)} »</p><small>${fdt(t.at)} · ${t.source === 'site' ? 'envoyé depuis le site' : 'ajouté par l’équipe'}</small></div>
+      <label class="sw-l"><button class="sw ${t.publie ? 'on' : ''}" onclick="patchItem('temoignages','temoignages',${t.id},{publie:${!t.publie}})"></button>${t.publie ? 'Publié' : '<span class="badge or">À relire</span>'}</label>
+      <button class="btn line sm" onclick="editTem(${t.id})">Modifier</button></div>`).join('') : '<div class="empty">Aucun témoignage pour le moment.</div>'}</div>`;
+}
+let EM = null;
+function editTem(id) {
+  const t = id ? byId(G.temoignages, id) : null; EM = t ? { nom: t.nom, texte: t.texte, theme: t.theme, publie: t.publie, _id: id } : { nom: '', texte: '', theme: '', publie: true, _id: 0 };
+  openModal(`<div class="mt h">${id ? 'Modifier' : 'Ajouter'} un témoignage</div>
+    <div class="row"><div class="fld"><label>Nom affiché</label><input value="${esc(EM.nom)}" oninput="EM.nom=this.value" placeholder="Ex. : Awa K. ou Anonyme"></div><div class="fld"><label>Accompagnement</label><input value="${esc(EM.theme)}" oninput="EM.theme=this.value" list="tl"><datalist id="tl">${G.themes.map(t => `<option value="${esc(t.nom)}">`).join('')}</datalist></div></div>
+    <div class="fld"><label>Témoignage</label><textarea rows="6" oninput="EM.texte=this.value">${esc(EM.texte)}</textarea></div>
+    <label class="sw-l"><button class="sw ${EM.publie ? 'on' : ''}" onclick="EM.publie=!EM.publie;this.classList.toggle('on')"></button> Publié sur le site</label>
+    <div class="err" id="em-e"></div><div class="mfoot">${id ? `<button class="btn ghost" onclick="delItem('temoignages','temoignages',${id})">Supprimer</button>` : ''}<button class="btn big" onclick="saveItem('temoignages','temoignages',EM,'em-e')">Enregistrer</button></div>`);
+}
+
+// ---------- Ressources ----------
+function rRess() {
+  const rs = G.ressources.slice().sort((a, b) => b.at.localeCompare(a.at));
+  $('p-ressources').innerHTML = `<div class="ph-t"><div><div class="h">Ressources</div><p>Exercices, réflexions, conseils et vidéos offerts aux visiteurs, rubrique « Grandir ».</p></div><button class="btn" onclick="editRess()">+ Nouvelle ressource</button></div>
+    <div class="card lst">${rs.length ? rs.map(r => `<div class="li ${r.actif ? '' : 'off'}"><div class="thumb">${r.image ? `<img src="${esc(r.image)}">` : '<img src="/img/laurier.webp" style="object-fit:contain;padding:6px">'}</div><div class="tx"><b>${esc(r.titre)}</b><small>${esc(r.categorie)}${r.duree ? ' · ' + esc(r.duree) : ''} · ${esc(r.resume)}</small></div>
+      <button class="sw ${r.actif ? 'on' : ''}" onclick="patchItem('ressources','ressources',${r.id},{actif:${!r.actif}})"></button><button class="btn line sm" onclick="editRess(${r.id})">Modifier</button></div>`).join('') : '<div class="empty">Aucune ressource.</div>'}</div>`;
+}
+let ER = null;
+function editRess(id) {
+  const r = id ? byId(G.ressources, id) : null; ER = r ? Object.assign({}, r) : { titre: '', categorie: 'Réflexion', duree: '', resume: '', contenu: '', video: '', image: '', actif: true }; ER._id = id || 0;
+  openModal(`<div class="mt h">${id ? 'Modifier' : 'Nouvelle'} ressource</div><div class="grid2">
+    <div><div class="fld"><label>Titre</label><input value="${esc(ER.titre)}" oninput="ER.titre=this.value"></div>
+      <div class="row"><div class="fld"><label>Catégorie</label><input value="${esc(ER.categorie)}" oninput="ER.categorie=this.value" list="cats"><datalist id="cats">${['Réflexion', 'Exercice', 'Famille', 'Couple', 'Confiance en soi', 'Deuil', 'Vidéo', 'Prière / méditation'].map(c => `<option value="${c}">`).join('')}</datalist></div><div class="fld"><label>Durée de lecture</label><input value="${esc(ER.duree)}" oninput="ER.duree=this.value" placeholder="5 min"></div></div>
+      <div class="fld"><label>Résumé</label><input value="${esc(ER.resume)}" oninput="ER.resume=this.value"></div>
+      <div class="fld"><label>Vidéo (lien YouTube, facultatif)</label><input value="${esc(ER.video)}" oninput="ER.video=this.value"></div></div>
+    <div><div class="fld"><label>Image</label><div class="prev" id="er-prev" style="height:150px;${ER.image ? `background-image:url('${esc(ER.image)}')` : ''}"></div><input type="file" accept="image/*" style="margin-top:8px" onchange="pickImg(this,'er-prev',u=>ER.image=u)"></div>
+      <label class="sw-l"><button class="sw ${ER.actif ? 'on' : ''}" onclick="ER.actif=!ER.actif;this.classList.toggle('on')"></button> Visible sur le site</label></div></div>
+    <div class="fld"><label>Texte complet</label><textarea rows="10" oninput="ER.contenu=this.value">${esc(ER.contenu)}</textarea></div>
+    <div class="err" id="er-e"></div><div class="mfoot">${id ? `<button class="btn ghost" onclick="delItem('ressources','ressources',${id})">Supprimer</button>` : ''}<button class="btn big" onclick="saveItem('ressources','ressources',ER,'er-e')">Enregistrer</button></div>`, true);
+}
+
+// ===================================================================
+// PERSONNES ACCOMPAGNÉES
+// ===================================================================
+let PQ = '';
+function rPersonnes() {
+  const st = {};
+  G.rdvs.forEach(r => { if (!r.clientId) return; const s = st[r.clientId] = st[r.clientId] || { rdv: 0, last: '' }; if (r.statut === 'honore') s.rdv++; if (r.at > s.last) s.last = r.at; });
+  G.chats.forEach(m => { const s = st[m.clientId] = st[m.clientId] || { rdv: 0, last: '' }; if (m.at > s.last) s.last = m.at; });
+  const q = PQ.toLowerCase();
+  const list = G.clients.filter(c => !q || (c.nom + ' ' + c.tel).toLowerCase().includes(q)).sort((a, b) => ((st[b.id] || {}).last || b.createdAt || '').localeCompare((st[a.id] || {}).last || a.createdAt || ''));
+  $('p-personnes').innerHTML = `<div class="ph-t"><div><div class="h">Personnes accompagnées</div><p>${G.clients.filter(c => !c.invite).length} espace(s) créé(s) · ${G.clients.filter(c => c.invite).length} visiteur(s) ayant écrit sans compte. Ces informations sont confidentielles.</p></div>
+      <input placeholder="Rechercher un nom ou un numéro" value="${esc(PQ)}" oninput="PQ=this.value;rPersonnes();const i=document.querySelector('#p-personnes input');i.focus();i.setSelectionRange(i.value.length,i.value.length)" style="padding:10px 14px;border-radius:999px;border:1.5px solid var(--gris2);min-width:260px;outline:none"></div>
+    <div class="card">${list.length ? `<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Personne</th><th>Téléphone</th><th>Depuis</th><th class="num">Séances</th><th>Notifications</th><th>Dernier contact</th><th></th></tr></thead><tbody>
+      ${list.map(c => { const s = st[c.id] || {}; return `<tr><td><b>${esc(c.nom)}</b>${c.invite ? ' <span class="badge">visiteur</span>' : ''}${isCoach() && c.notePrivee ? ' 🔒' : ''}</td><td>${c.tel ? telLink(c.tel) : '—'}</td><td>${c.createdAt ? fdate(c.createdAt) : ''}</td><td class="num">${s.rdv || 0}</td><td>${c.push ? '<span class="badge vert">Activées</span>' : '<span class="badge">Non</span>'}</td><td>${s.last ? fdt(s.last) : '—'}</td>
+        <td><div class="acts"><button class="btn ghost sm" onclick="showPanel('discussions');openConv(${c.id})">Écrire</button><button class="btn line sm" onclick="fichePersonne(${c.id})">Fiche</button></div></td></tr>`; }).join('')}</tbody></table></div>` : '<div class="empty">Personne pour le moment.</div>'}</div>`;
+}
+function fichePersonne(id) {
+  const c = clientOf(id);
+  const rv = G.rdvs.filter(r => r.clientId === id).sort((a, b) => (b.date + b.heure).localeCompare(a.date + a.heure));
+  const dv = G.devis.filter(d => d.clientId === id), ins = G.inscriptions.filter(i => i.clientId === id);
+  openModal(`<div class="mt h">${esc(c.nom)}</div><p class="hint">${c.tel ? telLink(c.tel) : 'Pas de numéro'} · ${c.invite ? 'visiteur sans compte' : 'espace créé le ' + (c.createdAt ? fdate(c.createdAt) : '')}</p>
+    <div class="grid2" style="margin-top:14px;align-items:start"><div>
+      <div class="card-t" style="font-size:21px">Rendez-vous (${rv.length})</div>${rv.length ? rv.map(r => `<div class="it" style="cursor:default"><span class="tx"><b>${esc(dLong(r.date))} · ${esc(r.heure)}</b><small>${esc(r.theme)} · ${esc(r.format)}</small></span>${RDV_B[r.statut] || ''}</div>`).join('') : '<p class="hint">Aucun.</p>'}
+      ${dv.length ? `<div class="card-t" style="font-size:21px;margin-top:14px">Devis</div>${dv.map(d => `<div class="it" style="cursor:default"><span class="tx"><b>${esc(d.theme)}</b><small>${d.participants} pers. · ${esc(d.statut)}</small></span></div>`).join('')}` : ''}
+      ${ins.length ? `<div class="card-t" style="font-size:21px;margin-top:14px">Ateliers</div>${ins.map(i => `<div class="it" style="cursor:default"><span class="tx"><b>${esc(i.titre)}</b><small>${dmy(i.date)}</small></span>${IN_B[i.statut] || ''}</div>`).join('')}` : ''}</div>
+    <div>${isCoach() ? `<div class="card-t" style="font-size:21px">🔒 Notes privées du coach</div><textarea id="fp-n" rows="12" style="width:100%;padding:12px;border-radius:14px;border:1.5px solid var(--gris2);outline:none;font:inherit;line-height:1.5" placeholder="Visible uniquement par le coach.">${esc(c.notePrivee || '')}</textarea>
+      <div class="mfoot" style="justify-content:space-between"><button class="btn line sm" style="color:var(--rouge)" onclick="supprimerPersonne(${id})">Supprimer cette personne</button><button class="btn nuit" onclick="saveNoteClient(${id})">Enregistrer la note</button></div>` : '<p class="hint">Les notes privées sont réservées au coach.</p>'}
+      <div class="row" style="margin-top:12px"><button class="btn ghost" onclick="closeModal();showPanel('discussions');openConv(${id})">Écrire</button><button class="btn" onclick="editRdvManuel(${id})">+ Rendez-vous</button></div></div></div>`, true);
+}
+async function saveNoteClient(id) { try { const r = await api('/api/admin/clients/' + id, { method: 'PUT', body: { notePrivee: $('fp-n').value } }); upsert(G.clients, r.client); toast('Note enregistrée', ''); render(); } catch (e) { toast('Erreur', e.message, true); } }
+async function supprimerPersonne(id) {
+  if (!confirm('Supprimer cette personne, ses messages et ses notifications ? Ses rendez-vous restent dans l’historique, anonymisés. Action définitive.')) return;
+  try { await api(`/api/admin/clients/${id}/delete`, { body: {} }); G.clients = G.clients.filter(c => c.id !== id); G.chats = G.chats.filter(m => m.clientId !== id); if (CUR === id) CUR = null; closeModal(); await load(); render(); toast('Personne supprimée', ''); } catch (e) { toast('Erreur', e.message, true); }
+}
+
+// ===================================================================
+// MESSAGES & PENSÉES
+// ===================================================================
+function rMessages() {
+  const reg = G.clients.filter(c => !c.invite).length, push = G.clients.filter(c => c.push).length;
+  $('p-messages').innerHTML = `<div class="ph-t"><div><div class="h">Messages & pensées</div><p>Un message envoyé ici arrive en notification chez toutes les personnes qui ont un espace : pensée du jour, annonce d’atelier, encouragement…</p></div></div>
+    <div class="kpis"><div class="kpi nuit"><div class="l">Espaces créés</div><div class="v">${reg}</div></div><div class="kpi"><div class="l">Notifications activées</div><div class="v">${push}</div><div class="s">reçoivent même téléphone verrouillé</div></div>
+      <div class="kpi or"><div class="l">Messages envoyés</div><div class="v">${G.annonces.length}</div></div><div class="kpi"><div class="l">Messages programmés</div><div class="v">${G.programmes.filter(p => p.actif).length}</div><div class="s">actifs</div></div></div>
+    <div class="grid2" style="align-items:start">
+      <div class="card"><div class="card-t">Envoyer maintenant</div>
+        <div class="fld"><label>Titre</label><input id="an-t" placeholder="Ex. : Une pensée pour vous" maxlength="80"></div>
+        <div class="fld"><label>Message</label><textarea id="an-c" maxlength="500" placeholder="Ex. : Prochain atelier : {prochain_atelier}. Inscrivez-vous sur le site !"></textarea></div>
+        <div class="ins"><button onclick="ins('an-c','{coach}')">+ nom du coach</button><button onclick="ins('an-c','{prochain_atelier}')">+ prochain atelier</button></div>
+        <button class="btn big" onclick="sendAnnonce()">Envoyer à tout le monde</button></div>
+      <div class="card"><div class="card-t"><span>Messages programmés</span><button class="btn ghost sm" onclick="editProg()">+ Programmer</button></div>
+        ${G.programmes.length ? G.programmes.map(p => `<div class="prog"><div class="hr">${esc(p.heure)}</div><div class="tx"><b>${esc(p.titre)}</b><p>${esc(p.corps)}</p>
+          <div class="days" style="margin-top:8px">${JOURS.map(([d, l]) => `<button class="${p.jours.includes(d) ? 'on' : ''}" style="width:28px;height:28px;font-size:11px;cursor:default">${l}</button>`).join('')}</div>
+          <p style="margin-top:6px;font-size:12px">${p.dernierEnvoi ? 'Dernier envoi : ' + dmy(p.dernierEnvoi) : 'Jamais envoyé'}</p></div>
+          <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end"><button class="sw ${p.actif ? 'on' : ''}" onclick="patchProg(${p.id},{actif:${!p.actif}})"></button><button class="btn ghost sm" onclick="editProg(${p.id})">Modifier</button><button class="btn line sm" onclick="sendProg(${p.id})">Envoyer maintenant</button></div></div>`).join('') : '<div class="empty">Aucun message programmé.</div>'}
+        <p class="hint" style="margin-top:10px">Exemple : chaque matin à 7 h, une pensée d’encouragement. Le serveur doit rester allumé.</p></div></div>
+    <div class="card" style="margin-top:16px"><div class="card-t">Derniers envois</div>${G.annonces.length ? `<table class="tbl"><tbody>${G.annonces.slice(0, 15).map(a => `<tr><td style="width:150px">${fdt(a.at)}</td><td><b>${esc(a.titre)}</b> — ${esc(a.corps)}</td></tr>`).join('')}</tbody></table>` : '<div class="empty">Aucun envoi pour le moment.</div>'}</div>`;
+}
+function ins(id, t) { const el = $(id); const s = el.selectionStart || el.value.length; el.value = el.value.slice(0, s) + t + el.value.slice(s); el.focus(); }
+async function sendAnnonce() {
+  const t = $('an-t').value.trim(), c = $('an-c').value.trim();
+  if (!t || !c) return toast('Message incomplet', 'Titre et message requis.', true);
+  if (!confirm('Envoyer ce message à toutes les personnes inscrites ?')) return;
+  try { const r = await api('/api/admin/annonces', { body: { titre: t, corps: c } }); G.annonces.unshift(r.annonce); render(); toast('Message envoyé', `${r.pushes} notification(s) · ${r.enLigne} personne(s) connectée(s)`); } catch (e) { toast('Erreur', e.message, true); }
+}
+let EPR = null;
+function editProg(id) {
+  const p = id ? byId(G.programmes, id) : null;
+  EPR = p ? JSON.parse(JSON.stringify(p)) : { titre: 'Une pensée pour votre journée', corps: 'Bonjour ! Prenez un instant pour respirer. Vous avez le droit d’avancer à votre rythme. — {coach}', heure: '07:00', jours: [1, 2, 3, 4, 5, 6, 0], actif: true };
+  EPR._id = id || 0;
+  openModal(`<div class="mt h">${id ? 'Modifier' : 'Programmer'} un message</div>
+    <div class="row"><div class="fld" style="max-width:140px"><label>Heure</label><input type="time" id="pr-h" value="${esc(EPR.heure)}"></div>
+    <div class="fld"><label>Jours</label><div class="days">${JOURS.map(([d, l]) => `<button class="${EPR.jours.includes(d) ? 'on' : ''}" onclick="this.classList.toggle('on');EPR.jours=EPR.jours.includes(${d})?EPR.jours.filter(x=>x!==${d}):EPR.jours.concat(${d})">${l}</button>`).join('')}</div></div></div>
+    <div class="fld"><label>Titre</label><input id="pr-t" value="${esc(EPR.titre)}"></div>
+    <div class="fld"><label>Message</label><textarea id="pr-c">${esc(EPR.corps)}</textarea></div>
+    <div class="ins"><button onclick="ins('pr-c','{coach}')">+ nom du coach</button><button onclick="ins('pr-c','{prochain_atelier}')">+ prochain atelier</button></div>
+    <div class="err" id="pr-err"></div><div class="mfoot">${id ? `<button class="btn ghost" onclick="delProg(${id})">Supprimer</button>` : ''}<button class="btn" onclick="saveProg()">Enregistrer</button></div>`);
+}
+async function saveProg() {
+  const body = { heure: $('pr-h').value, titre: $('pr-t').value, corps: $('pr-c').value, jours: EPR.jours, actif: EPR.actif };
+  try { const r = EPR._id ? await api('/api/admin/programmes/' + EPR._id, { method: 'PUT', body }) : await api('/api/admin/programmes', { body }); upsert(G.programmes, r.programme); closeModal(); render(); toast('Message programmé', `Envoi automatique à ${r.programme.heure}`); } catch (e) { $('pr-err').textContent = e.message; }
+}
+async function patchProg(id, body) { try { const r = await api('/api/admin/programmes/' + id, { method: 'PUT', body }); upsert(G.programmes, r.programme); render(); } catch (e) { toast('Erreur', e.message, true); } }
+async function sendProg(id) { if (!confirm('Envoyer ce message maintenant à tout le monde ?')) return; try { const r = await api(`/api/admin/programmes/${id}/envoyer`, { body: {} }); await load(); render(); toast('Message envoyé', r.pushes + ' notification(s)'); } catch (e) { toast('Erreur', e.message, true); } }
+async function delProg(id) { if (!confirm('Supprimer ce message programmé ?')) return; await api(`/api/admin/programmes/${id}/delete`, { body: {} }); G.programmes = G.programmes.filter(p => p.id !== id); closeModal(); render(); }
+
+// ===================================================================
+// LE COACH / CONTACTS & RÉSEAUX / AGENDA / FAQ
+// ===================================================================
+async function saveCoach(body, msg) {
+  try { const r = await api('/api/admin/coach', { method: 'PUT', body }); G.coach = r.coach; $('g-nom').textContent = G.coach.nom; toast(msg || 'Enregistré', 'Le site est à jour.'); render(); return true; }
+  catch (e) { toast('Erreur', e.message, true); return false; }
+}
+let CP = null;
+function rCoach() {
+  const c = G.coach; CP = { photo: c.photo };
+  $('p-coach').innerHTML = `<div class="ph-t"><div><div class="h">Le coach</div><p>La présentation affichée dans la section « Qui est le coach ? » et dans la bannière.</p></div><a class="btn ghost" href="/#coach" target="_blank">Voir sur le site</a></div>
+    <div class="grid2" style="align-items:start">
+      <div class="card"><div class="card-t">Identité</div>
+        <div class="row" style="align-items:center;margin-bottom:12px"><div class="prev" id="cp-prev" style="width:130px;height:160px;border-radius:70px 70px 16px 16px;${c.photo ? `background-image:url('${esc(c.photo)}')` : ''}"></div>
+          <div class="fld"><label>Photo du coach</label><input type="file" accept="image/*" onchange="pickImg(this,'cp-prev',u=>CP.photo=u,1200)">${c.photo ? `<button class="btn ghost sm" style="margin-top:8px" onclick="CP.photo='';$('cp-prev').style.backgroundImage='none'">Retirer la photo</button>` : ''}<p class="hint" style="margin-top:6px">Portrait vertical de préférence. Elle apparaît aussi au centre de la couronne de laurier.</p></div></div>
+        <div class="row"><div class="fld"><label>Nom affiché</label><input id="cp-nom" value="${esc(c.nom)}"></div><div class="fld"><label>Marque</label><input id="cp-marque" value="${esc(c.marque)}"></div></div>
+        <div class="fld"><label>Slogan</label><input id="cp-slogan" value="${esc(c.slogan)}"></div>
+        <div class="fld"><label>Valeurs (une par ligne)</label><textarea id="cp-val" rows="4">${esc((c.valeurs || []).join('\n'))}</textarea></div>
+        <div class="fld"><label>Chiffres clés (3 maximum conseillé)</label>${[0, 1, 2, 3].map(i => `<div class="row" style="margin-bottom:6px"><input id="cp-cv${i}" value="${esc(((c.chiffres || [])[i] || {}).valeur || '')}" placeholder="Valeur" style="max-width:110px;padding:10px;border-radius:10px;border:1.5px solid var(--gris2)"><input id="cp-cl${i}" value="${esc(((c.chiffres || [])[i] || {}).libelle || '')}" placeholder="Libellé" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--gris2)"></div>`).join('')}<p class="hint">Ex. : « 10 ans » d’expérience, « 300+ » personnes accompagnées. N’indiquez que des chiffres vrais.</p></div></div>
+      <div class="card"><div class="card-t">Présentation</div>
+        <div class="fld"><label>Titre de la section</label><input id="cp-tb" value="${esc(c.titreBio)}"></div>
+        <div class="fld"><label>Biographie (laissez une ligne vide entre les paragraphes)</label><textarea id="cp-bio" rows="13">${esc(c.bio)}</textarea></div>
+        <div class="fld"><label>Citation</label><textarea id="cp-cit" rows="2">${esc(c.citation)}</textarea></div>
+        <div class="mfoot"><button class="btn big" onclick="saveProfilCoach()">Enregistrer</button></div></div></div>`;
+}
+function saveProfilCoach() {
+  const chiffres = [0, 1, 2, 3].map(i => ({ valeur: $('cp-cv' + i).value, libelle: $('cp-cl' + i).value })).filter(x => x.valeur || x.libelle);
+  saveCoach({ nom: $('cp-nom').value, marque: $('cp-marque').value, slogan: $('cp-slogan').value, titreBio: $('cp-tb').value, bio: $('cp-bio').value, citation: $('cp-cit').value, photo: CP.photo, valeurs: $('cp-val').value.split('\n').map(s => s.trim()).filter(Boolean), chiffres });
+}
+const RS = [['facebook', 'Facebook', 'facebook.com/votrepage'], ['instagram', 'Instagram', 'instagram.com/votrecompte'], ['tiktok', 'TikTok', 'tiktok.com/@votrecompte'], ['youtube', 'YouTube', 'youtube.com/@votrechaine'], ['linkedin', 'LinkedIn', 'linkedin.com/in/…'], ['x', 'X (Twitter)', 'x.com/…'], ['telegram', 'Telegram', 't.me/…'], ['whatsappChaine', 'Chaîne WhatsApp', 'whatsapp.com/channel/…'], ['site', 'Autre site / lien', 'https://…']];
+function rContacts() {
+  const c = G.coach; const f = (k, l, ph) => `<div class="fld"><label>${l}</label><input id="ct-${k}" value="${esc(c[k] || '')}" placeholder="${esc(ph || '')}"></div>`;
+  $('p-contacts').innerHTML = `<div class="ph-t"><div><div class="h">Contacts & réseaux sociaux</div><p>Ces informations s’affichent en haut du site, dans la section Contact, le pied de page et les boutons Appeler / WhatsApp.</p></div></div>
+    <div class="grid2" style="align-items:start">
+      <div class="card"><div class="card-t">Coordonnées</div>
+        <div class="row">${f('tel', 'Téléphone (appels)', '+225 07 79 15 62 89')}${f('whatsapp', 'Numéro WhatsApp', '+225 07 79 15 62 89')}</div>
+        ${f('email', 'E-mail', 'contact@…')}${f('adresse', 'Adresse / ville', 'Abidjan, Côte d’Ivoire')}${f('horaires', 'Horaires (texte affiché)', 'Du lundi au samedi, 8 h – 19 h')}
+        <div class="mfoot"><button class="btn big" onclick="saveContacts()">Enregistrer</button></div></div>
+      <div class="card"><div class="card-t">Réseaux sociaux</div><p class="hint" style="margin:-4px 0 12px">Collez le lien de chaque page. Laissez vide pour masquer l’icône sur le site.</p>
+        <div class="soc-i">${RS.map(([k, l, ph]) => `<div class="fld"><label>${l}</label><input id="rs-${k}" value="${esc(c.reseaux[k] || '')}" placeholder="${esc(ph)}"></div>`).join('')}</div>
+        <div class="mfoot"><button class="btn big" onclick="saveReseaux()">Enregistrer les liens</button></div></div></div>`;
+}
+function saveContacts() { const b = {}; ['tel', 'whatsapp', 'email', 'adresse', 'horaires'].forEach(k => b[k] = $('ct-' + k).value); saveCoach(b, 'Coordonnées enregistrées'); }
+function saveReseaux() { const r = {}; RS.forEach(([k]) => r[k] = $('rs-' + k).value.trim()); saveCoach({ reseaux: r }, 'Liens enregistrés'); }
+let AG = null;
+function rAgenda() {
+  const c = G.coach; AG = JSON.parse(JSON.stringify({ rdv: c.rdv, indisponibles: c.indisponibles || [] }));
+  drawAgenda();
+}
+function drawAgenda() {
+  const r = AG.rdv;
+  $('p-agenda').innerHTML = `<div class="ph-t"><div><div class="h">Agenda & horaires</div><p>Les créneaux proposés en ligne pour la prise de rendez-vous. Un créneau déjà demandé ou confirmé n’est plus proposé.</p></div></div>
+    <div class="grid2" style="align-items:start">
+      <div class="card"><div class="card-t">Jours et créneaux</div>
+        <div class="fld"><label>Jours de consultation</label><div class="days">${JOURS.map(([d, l]) => `<button class="${r.jours.includes(d) ? 'on' : ''}" onclick="AG.rdv.jours=AG.rdv.jours.includes(${d})?AG.rdv.jours.filter(x=>x!==${d}):AG.rdv.jours.concat(${d});drawAgenda()">${l}</button>`).join('')}</div></div>
+        <div class="fld"><label>Heures de début des séances</label><div class="chips">${r.creneaux.map((h, i) => `<span class="chip">${h}<button onclick="AG.rdv.creneaux.splice(${i},1);drawAgenda()">×</button></span>`).join('')}</div>
+          <div class="row" style="margin-top:8px"><input type="time" id="ag-h" value="18:30" style="padding:9px;border-radius:10px;border:1.5px solid var(--gris2)"><button class="btn ghost sm" onclick="const v=$('ag-h').value;if(v&&!AG.rdv.creneaux.includes(v)){AG.rdv.creneaux.push(v);AG.rdv.creneaux.sort();drawAgenda()}">+ Ajouter</button></div></div>
+        <div class="row"><div class="fld"><label>Durée d’une séance (min)</label><input type="number" value="${r.duree}" oninput="AG.rdv.duree=Number(this.value)"></div>
+          <div class="fld"><label>Délai minimum (heures)</label><input type="number" value="${r.delaiHeures}" oninput="AG.rdv.delaiHeures=Number(this.value)"></div>
+          <div class="fld"><label>Réservable jusqu’à (jours)</label><input type="number" value="${r.horizonJours}" oninput="AG.rdv.horizonJours=Number(this.value)"></div></div></div>
+      <div class="card"><div class="card-t">Formats & tarif</div>
+        <div class="fld"><label>Formats proposés (un par ligne)</label><textarea rows="4" oninput="AG.rdv.formats=this.value.split('\\n').map(s=>s.trim()).filter(Boolean)">${esc(r.formats.join('\n'))}</textarea></div>
+        <div class="fld"><label>Information tarif (affichée lors de la prise de RDV)</label><input value="${esc(r.tarif)}" oninput="AG.rdv.tarif=this.value"></div>
+        <div class="card-t" style="margin-top:16px">Jours bloqués <span class="hint" style="font-family:var(--fb);font-size:12.5px">congés, déplacements…</span></div>
+        <div class="chips">${AG.indisponibles.length ? AG.indisponibles.map((d, i) => `<span class="chip">${esc(dLong(d))}<button onclick="AG.indisponibles.splice(${i},1);drawAgenda()">×</button></span>`).join('') : '<span class="hint">Aucun jour bloqué.</span>'}</div>
+        <div class="row" style="margin-top:8px"><input type="date" id="ag-d" min="${todayStr()}" style="padding:9px;border-radius:10px;border:1.5px solid var(--gris2)"><button class="btn ghost sm" onclick="const v=$('ag-d').value;if(v&&!AG.indisponibles.includes(v)){AG.indisponibles.push(v);AG.indisponibles.sort();drawAgenda()}">+ Bloquer ce jour</button></div></div></div>
+    <div class="mfoot"><button class="btn big" onclick="saveCoach({rdv:AG.rdv,indisponibles:AG.indisponibles},'Agenda enregistré')">Enregistrer l’agenda</button></div>`;
+}
+let FQ = null;
+function rFaq() { FQ = JSON.parse(JSON.stringify(G.coach.faq || [])); drawFaq(); }
+function drawFaq() {
+  $('p-faq').innerHTML = `<div class="ph-t"><div><div class="h">Questions fréquentes</div><p>Affichées en bas du site, juste avant le contact.</p></div><button class="btn ghost" onclick="FQ.push({q:'',r:''});drawFaq()">+ Question</button></div>
+    <div class="card">${FQ.map((f, i) => `<div style="padding:12px 0;border-bottom:1px solid var(--gris)"><div class="row"><div class="fld" style="margin:0"><input value="${esc(f.q)}" oninput="FQ[${i}].q=this.value" placeholder="Question"></div><button class="xbtn" onclick="FQ.splice(${i},1);drawFaq()">×</button></div>
+      <div class="fld" style="margin:8px 0 0"><textarea rows="2" oninput="FQ[${i}].r=this.value" placeholder="Réponse">${esc(f.r)}</textarea></div></div>`).join('') || '<div class="empty">Aucune question.</div>'}
+      <div class="mfoot"><button class="btn big" onclick="saveCoach({faq:FQ},'FAQ enregistrée')">Enregistrer</button></div></div>`;
+}
+
+// ===================================================================
+// ÉQUIPE & MON COMPTE
+// ===================================================================
+function rEquipe() {
+  const online = new Set(((G.presence || {}).enLigne || []).map(u => u.nom));
+  $('p-equipe').innerHTML = `<div class="ph-t"><div><div class="h">Équipe</div><p>Créez un accès pour chaque assistant(e). Les assistant(e)s répondent aux discussions, gèrent les rendez-vous, devis et ateliers, mais ne voient pas vos notes privées et ne modifient pas votre profil.</p></div></div>
+    <div class="grid2" style="align-items:start">
+      <div class="card"><div class="card-t">Membres</div><div class="lst">${G.users.map(u => `<div class="li ${u.actif ? '' : 'off'}"><div class="thumb" style="background:var(--nuit);color:var(--or2);font-weight:800;border-radius:50%">${esc(u.nom[0].toUpperCase())}</div>
+        <div class="tx"><b>${esc(u.nom)} ${online.has(u.nom) ? '<span class="badge vert">en ligne</span>' : ''}</b><small>Identifiant : ${esc(u.username)} · ${u.role === 'coach' ? 'Coach (accès complet)' : 'Assistant(e)'}</small></div>
+        ${u.id !== ME.id ? `<button class="sw ${u.actif ? 'on' : ''}" title="Accès actif" onclick="patchUser(${u.id},{actif:${!u.actif}})"></button>` : '<span class="badge">vous</span>'}
+        <button class="btn line sm" onclick="editUser(${u.id})">Modifier</button></div>`).join('')}</div></div>
+      <div class="card"><div class="card-t">Ajouter un(e) assistant(e)</div>
+        <div class="fld"><label>Nom affiché dans la discussion</label><input id="nu-n" placeholder="Ex. : Marie"></div>
+        <div class="row"><div class="fld"><label>Identifiant</label><input id="nu-u" autocomplete="off"></div><div class="fld"><label>Mot de passe</label><input id="nu-p" type="text" autocomplete="off"></div></div>
+        <div class="fld"><label>Rôle</label><select id="nu-r"><option value="assistant">Assistant(e)</option><option value="coach">Coach (accès complet)</option></select></div>
+        <div class="err" id="nu-e"></div><button class="btn big" onclick="addUser()">Créer l’accès</button>
+        <p class="hint" style="margin-top:10px">Transmettez l’identifiant et le mot de passe à la personne. Elle se connecte sur cette même page.</p></div></div>`;
+}
+async function addUser() { try { const r = await api('/api/admin/users', { body: { nom: $('nu-n').value, username: $('nu-u').value, password: $('nu-p').value, role: $('nu-r').value } }); G.users.push(r.user); render(); toast('Accès créé', r.user.username); } catch (e) { $('nu-e').textContent = e.message; } }
+async function patchUser(id, body) { try { const r = await api('/api/admin/users/' + id, { method: 'PUT', body }); upsert(G.users, r.user); closeModal(); render(); toast('Enregistré', ''); } catch (e) { toast('Erreur', e.message, true); } }
+function editUser(id) {
+  const u = byId(G.users, id);
+  openModal(`<div class="mt h">${esc(u.nom)}</div><div class="fld"><label>Nom affiché</label><input id="eu-n" value="${esc(u.nom)}"></div>
+    <div class="fld"><label>Rôle</label><select id="eu-r"><option value="assistant" ${u.role === 'assistant' ? 'selected' : ''}>Assistant(e)</option><option value="coach" ${u.role === 'coach' ? 'selected' : ''}>Coach (accès complet)</option></select></div>
+    <div class="fld"><label>Nouveau mot de passe (laisser vide pour ne pas changer)</label><input id="eu-p" type="text" autocomplete="off"></div>
+    <div class="mfoot"><button class="btn big" onclick="patchUser(${id},Object.assign({nom:$('eu-n').value,role:$('eu-r').value},$('eu-p').value?{password:$('eu-p').value}:{}))">Enregistrer</button></div>`);
+}
+function rCompte() {
+  const url = (() => { try { return localStorage.getItem('c_base') || location.origin; } catch (e) { return location.origin; } })();
+  let qr = ''; try { const q = qrcode(0, 'M'); q.addData(url + '/?rdv=1'); q.make(); qr = q.createSvgTag({ cellSize: 4, margin: 0, scalable: true }); } catch (e) { }
+  $('p-compte').innerHTML = `<div class="ph-t"><div><div class="h">Mon compte</div><p>Connecté(e) en tant que ${esc(ME.nom)} (${esc(ME.username)}).</p></div></div>
+    <div class="grid2" style="align-items:start">
+      <div class="card"><div class="card-t">Identifiant et mot de passe</div>
+        <div class="fld"><label>Mot de passe actuel</label><input id="sc-cur" type="password"></div>
+        <div class="row"><div class="fld"><label>Nouvel identifiant</label><input id="sc-u" placeholder="${esc(ME.username)}"></div><div class="fld"><label>Nouveau mot de passe</label><input id="sc-p" type="password"></div></div>
+        <div class="err" id="sc-err"></div><button class="btn nuit" onclick="saveSecu()">Mettre à jour</button></div>
+      <div class="card"><div class="card-t">QR code « Prendre rendez-vous »</div><p class="hint">À imprimer sur vos cartes de visite, flyers et affiches d’ateliers : on scanne, on arrive directement sur la prise de rendez-vous.</p>
+        <div class="row noprint" style="margin-top:10px"><div class="fld"><label>Adresse publique du site</label><input id="qr-u" value="${esc(url)}"></div><div class="fld" style="flex:0"><button class="btn ghost" onclick="try{localStorage.setItem('c_base',$('qr-u').value.trim().replace(/\\/+$/,''))}catch(e){};render()">Mettre à jour</button></div></div>
+        ${/localhost|127\.0\.0\.1/.test(url) ? '<p class="hint" style="color:var(--rouge);font-weight:700">« localhost » ne fonctionne que sur cet ordinateur : indiquez l’adresse en ligne du site.</p>' : ''}
+        <div class="qr-c">${qr}<b class="h" style="font-size:24px">Prendre rendez-vous</b><p class="hint">${esc(G.coach.nom)} · ${esc(G.coach.tel)}</p></div>
+        <button class="btn" style="margin-top:12px" onclick="window.print()">Imprimer</button></div></div>`;
+}
+async function saveSecu() {
+  try { const r = await api('/api/admin/securite', { body: { currentPassword: $('sc-cur').value, newUsername: $('sc-u').value, newPassword: $('sc-p').value } }); ME = r.user; render(); toast('Accès mis à jour', ''); }
+  catch (e) { $('sc-err').textContent = e.message; }
+}
+</script>
+</body>
+</html>

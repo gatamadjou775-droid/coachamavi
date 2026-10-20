@@ -1,0 +1,153 @@
+========================================================
+   COACH AMAVIE — Metanoïa Coaching · guide rapide
+========================================================
+
+CE QUE FAIT CE LOGICIEL
+------------------------
+Un site web complet pour le coach + un espace de gestion, sur un seul
+serveur et une seule base de données (même principe que la plateforme
+restaurant).
+
+  1. SITE PUBLIC  (adresse principale : /)
+     - Bannière défilante avec les grands thèmes (angoisse, blessures de
+       l'enfance, divorce, deuil, célibat, mères célibataires…) +
+       bande dorée défilante de tous les accompagnements
+     - « Qui est le coach ? » : photo, biographie, citation, valeurs
+     - Les 11 accompagnements (fiche détaillée pour chacun)
+     - Comment ça se passe, formules (individuel, groupe, formation, en ligne)
+     - Ateliers & événements avec inscription et places restantes
+     - Témoignages (publiés seulement après relecture du coach)
+     - Ressources « Grandir » (exercices, réflexions, vidéos)
+     - Demande de devis de formation (entreprises, églises, associations…)
+     - Questions fréquentes, contact, réseaux sociaux
+     - Boutons Appeler / WhatsApp (+225 07 79 15 62 89) partout
+     - PRISE DE RENDEZ-VOUS EN LIGNE : sujet > format (cabinet, visio,
+       téléphone) > jour et créneau libre > confirmation
+     - DISCUSSION EN DIRECT avec le coach ou une assistante, avec un
+       simple prénom ou pseudo (pas besoin de compte). Le visiteur voit
+       si le coach ou l'équipe est en ligne. Hors ligne : réponse
+       automatique avec le numéro d'urgence.
+     - ESPACE CONFIDENTIEL (prénom + téléphone + code à 4 chiffres) :
+       rendez-vous, discussion, devis, ateliers, notifications
+
+  2. ESPACE COACH  (/gestion.html)
+     - Tableau de bord : RDV du jour, demandes à traiter, messages non lus,
+       encaissé du mois, agenda des 7 prochains jours
+     - Rendez-vous : confirmer (avec infos pratiques), proposer un autre
+       horaire, refuser, annuler, « effectué » + paiement, absent,
+       note privée, ajout d'un RDV pris par téléphone.
+       Rappel automatique la veille à 18 h.
+     - Discussions en temps réel (son + alerte), réponses rapides,
+       filtre « pour le coach » / « pour l'équipe »
+     - Devis de formation : proposition chiffrée que la personne accepte
+       depuis son espace
+     - Ateliers : création, liste des inscrits, confirmation, présence
+     - Personnes accompagnées : fiche, historique, notes privées du coach
+     - Messages & pensées : envoyer maintenant ou programmer
+       (ex. une pensée chaque matin à 7 h)
+     - Le coach : photo, biographie, valeurs, chiffres clés
+     - Contacts & réseaux sociaux : Facebook, Instagram, TikTok, YouTube,
+       LinkedIn, X, Telegram, chaîne WhatsApp, autre lien.
+       Une icône n'apparaît sur le site que si le lien est rempli.
+     - Agenda & horaires : jours de consultation, heures des séances,
+       durée, délai minimum, jours bloqués (congés)
+     - Accompagnements, bannière défilante, témoignages, ressources, FAQ :
+       tout se modifie sans toucher au code, photos comprises
+     - Équipe : un accès par assistant(e). Les assistant(e)s ne voient pas
+       les notes privées et ne modifient pas le profil du coach.
+     - Bouton « Disponible / Indisponible » visible en direct sur le site
+     - QR code « Prendre rendez-vous » à imprimer (cartes, flyers)
+
+
+DÉMARRER
+---------
+Il faut Node.js (version 18 ou plus) : https://nodejs.org
+Aucune installation de paquets : tout est inclus (polices comprises).
+
+  Windows   : double-cliquez sur demarrer.bat
+  Mac/Linux : ./demarrer.sh   (ou : node server.js)
+
+Le terminal affiche les adresses, par exemple :
+  Site public  : http://localhost:3000
+  Espace coach : http://localhost:3000/gestion.html
+
+
+PREMIÈRE UTILISATION
+---------------------
+1. Ouvrez /gestion.html : créez l'identifiant et le mot de passe du coach.
+2. « Le coach » : ajoutez la photo du coach et ajustez la biographie
+   (le texte fourni est un point de départ à personnaliser).
+3. « Contacts & réseaux » : vérifiez le numéro et collez les liens des
+   réseaux sociaux.
+4. « Agenda & horaires » : jours et heures de consultation.
+5. « Bannière défilante » : ajoutez des photos (horizontales,
+   environ 1 600 × 900). Astuce : *un mot entre astérisques* s'affiche
+   en italique doré.
+6. « Équipe » : créez les accès des assistant(e)s.
+7. Témoignages : n'en publiez que de vrais, avec l'accord des personnes.
+
+
+NOTIFICATIONS SUR LE TÉLÉPHONE
+-------------------------------
+- Site ouvert : les personnes voient les réponses en direct (son + bandeau).
+- Site fermé / téléphone verrouillé : il faut le site PUBLIÉ EN LIGNE en
+  HTTPS. Sur iPhone, la personne doit d'abord « Ajouter à l'écran
+  d'accueil » (iOS 16.4 ou plus), puis activer les notifications.
+- Côté coach : gardez /gestion.html ouvert (ordinateur ou téléphone) et
+  cliquez « Activer les alertes sur cet appareil » dans le tableau de bord.
+- Les messages programmés et rappels partent tant que le serveur tourne.
+
+
+METTRE EN LIGNE
+----------------
+Comme la plateforme restaurant : Render, Railway ou un petit VPS, avec un
+DISQUE PERSISTANT et la variable d'environnement DATA_FILE pointant
+dessus (ex. /data/data.json). Les photos sont rangées dans /data/uploads
+et les sauvegardes dans /data/sauvegardes. Un Dockerfile est fourni.
+Remarque : un hébergement « Cloudflare Workers » seul ne convient pas
+(pas de disque pour data.json ni de serveur permanent).
+
+Ensuite, reliez un nom de domaine (ex. coachamavie.com) chez l'hébergeur.
+
+
+PAIEMENT
+---------
+Les séances, ateliers et formations sont réglés en direct (espèces, Wave,
+Orange Money, MTN MoMo, Moov Money, virement) et notés dans l'espace
+coach. Le paiement en ligne automatique (CinetPay, PayDunya…) demande un
+compte marchand, donc les documents de l'entreprise.
+
+
+CONFIDENTIALITÉ
+----------------
+- Les visiteurs peuvent utiliser un pseudo.
+- Chaque personne peut supprimer son espace et ses échanges depuis son
+  profil ; le coach peut aussi supprimer une personne depuis sa fiche.
+- Les notes privées ne sont visibles que par les comptes « coach ».
+
+
+SAUVEGARDES
+------------
+Une copie de data.json est faite chaque jour dans sauvegardes/ (30 jours
+gardés). Copiez aussi data.json + uploads/ ailleurs de temps en temps.
+
+
+MOT DE PASSE PERDU
+-------------------
+Un autre compte coach peut redéfinir le mot de passe dans « Équipe ».
+S'il n'y en a pas : la personne qui a accès au serveur peut renommer
+data.json et relancer (tout repart de zéro — gardez l'ancien fichier).
+
+
+ARCHITECTURE
+-------------
+  server.js              serveur Node.js (aucune dépendance)
+  data.json              toutes les données (créé automatiquement)
+  uploads/               photos envoyées
+  sauvegardes/           copies quotidiennes
+  public/index.html      site public (+ site.css, site.js)
+  public/gestion.html    espace coach (+ admin.css, admin-commun.js)
+  public/sw.js           notifications push (service worker)
+  public/img/            logo, couronne de laurier, icônes
+  public/fonts/          polices incluses (Cormorant Garamond, Manrope)
+  public/vendor/         génération des QR codes
